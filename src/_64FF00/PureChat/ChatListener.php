@@ -15,6 +15,10 @@ class ChatListener implements Listener
 		$this->plugin = $plugin;
 	}
 	
+	/**
+	 * @param PlayerChatEvent $event
+	 * @priority HIGHEST
+	 */
 	public function onPlayerChat(PlayerChatEvent $event)
 	{
 		$player = $event->getPlayer();
