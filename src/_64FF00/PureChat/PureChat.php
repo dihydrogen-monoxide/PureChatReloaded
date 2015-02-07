@@ -62,9 +62,16 @@ class PureChat extends PluginBase
 		$chatFormat = str_replace("%user_name%", $player->getName(), $chatFormat);
 		$chatFormat = str_replace("%message%", $message, $chatFormat);
 		
-		if($this->factionsPro != null and $this->factionsPro->isInFaction($player->getName())) 
+		if($this->factionsPro != null) 
 		{
-			$chatFormat = str_replace("%faction%", $this->factionsPro->getPlayerFaction($player->getName()), $chatFormat);
+			if($this->factionsPro->isInFaction($player->getName()))
+			{
+				$chatFormat = str_replace("%faction%", $this->factionsPro->getPlayerFaction($player->getName()), $chatFormat);
+			}
+			else
+			{
+				$chatFormat = str_replace(" %faction%", "", $chatFormat);
+			}
 		}
 		
 		return $chatFormat;
