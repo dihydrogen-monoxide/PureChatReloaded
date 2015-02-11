@@ -40,17 +40,24 @@ class PureChat extends PluginBase
 	
 	public function formatMessage(Player $player, $message, $levelName = null)
 	{
-		$groupName = $this->PurePerms->getUser($player)->getGroup($levelName)->getName();
+		$group = $this->PurePerms->getUser($player)->getGroup($levelName);
+		
+		$groupName = $group->getName();
 		
 		if($levelName == null)
 		{
+			if($this->getConfig()->getNested("groups.$groupName.default") == null)
+			{
+				$this->getConfig()->setNested("groups.$groupName.default", "[$groupName] {display_name} > {message}");
+			}
+			
 			$chatFormat = $this->getConfig()->getNested("groups.$groupName.default");
 		}
 		else
 		{
 			if($this->getConfig()->getNested("groups.$groupName.worlds.$levelName") == null)
 			{
-				$this->getConfig()->setNested("groups.$groupName.worlds.$levelName", "[$groupName] %user_name% > %message%");
+				$this->getConfig()->setNested("groups.$groupName.worlds.$levelName", "[$groupName] {display_name} > {message}");
 				
 				$this->getConfig()->save();
 			}
