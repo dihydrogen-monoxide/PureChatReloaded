@@ -28,7 +28,7 @@ class PureChat extends PluginBase
 	
 	public function onEnable()
 	{
-		$this->plugin = $this->getServer()->getPluginManager()->getPlugin("PurePerms");
+		$this->PurePerms = $this->getServer()->getPluginManager()->getPlugin("PurePerms");
 		$this->factionsPro = $this->getServer()->getPluginManager()->getPlugin("FactionsPro");
 		
 		$this->getServer()->getPluginManager()->registerEvents(new ChatListener($this), $this);
@@ -40,7 +40,7 @@ class PureChat extends PluginBase
 	
 	public function formatMessage(Player $player, $message, $levelName = null)
 	{
-		$groupName = $this->plugin->getUser($player)->getGroup($levelName)->getName();
+		$groupName = $this->PurePerms->getUser($player)->getGroup($levelName)->getName();
 		
 		if($levelName == null)
 		{
@@ -58,20 +58,19 @@ class PureChat extends PluginBase
 			$chatFormat = $this->getConfig()->getNested("groups.$groupName.worlds.$levelName");
 		}
 		
-		$chatFormat = str_replace("%world_name%", $levelName, $chatFormat);
-		$chatFormat = str_replace("%user_name%", $player->getName(), $chatFormat);
-		$chatFormat = str_replace("%message%", $message, $chatFormat);
+		$chatFormat = str_replace("{world_name}", $levelName, $chatFormat);
+		$chatFormat = str_replace("{display_name}", $player->getDisplayName(), $chatFormat);
+		$chatFormat = str_replace("{user_name}", $player->getName(), $chatFormat);
+		$chatFormat = str_replace("{message}", $message, $chatFormat);
 		
 		if($this->factionsPro != null) 
 		{
-			if($this->factionsPro->isInFaction($player->getName()))
+			if(!$this->factionsPro->isInFaction($player->getName()))
 			{
-				$chatFormat = str_replace("%faction%", $this->factionsPro->getPlayerFaction($player->getName()), $chatFormat);
+				$chatFormat = str_replace("{faction}", "...", $chatFormat);
 			}
-			else
-			{
-				$chatFormat = str_replace(" %faction%", "", $chatFormat);
-			}
+			
+			$chatFormat = str_replace("{faction}", $this->factionsPro->getPlayerFaction($player->getName()), $chatFormat);
 		}
 		
 		return $chatFormat;

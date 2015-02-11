@@ -6,13 +6,14 @@ enable-multiworld-formats: false
 # A list of all PurePerms groups
 groups:
   Guest:
-    # Remember that you can also use %faction% tag if you have FactionsPro plugin installed!
-    default: "[Guest] %user_name% > %message%"
+    # Default tags: {world_name}, {display_name}, {user_name}, {message}
+    # Also remember that you can also use {faction} tag if you have FactionsPro plugin installed!
+    default: "[Guest] {display_name} > {message}"
     worlds: [] 
   Admin:
-    default: "[Admin] %user_name% > %message%"
+    default: "[Admin] {display_name} > {message}"
     worlds: []
   Owner: 
-    default: "[Owner] %user_name% > %message%"
+    default: "[Owner] {display_name} > {message}"
     worlds: []
 ...
