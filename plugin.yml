@@ -4,6 +4,6 @@ version: "1.2.3"
 api: [1.9.0]
 load: STARTUP
 author: 64FF00
-website: https://github.com/64FF00/PureChat
+website: https://github.com/PurePlugins/PureChat
 depend: [PurePerms]
 softdepend: [FactionsPro]
