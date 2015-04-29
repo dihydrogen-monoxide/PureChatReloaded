@@ -1,3 +1,6 @@
+
+# PureChat by 64FF00 (xktiverz@gmail.com, @64ff00 for Twitter)
+
 ---
 # Allows you to use per-world chat formats
 # - true / false
@@ -8,12 +11,17 @@ groups:
   Guest:
     # Default tags: {world_name}, {display_name}, {user_name}, {message}
     # Also remember that you can also use {faction} tag if you have FactionsPro plugin installed!
-    default: "[Guest] {display_name} > {message}"
+    
+    # New feature added in v1.2.4 - Colors!
+    # RED: {COLOR_RED}, GREEN: {COLOR_GREEN}, BLUE: {COLOR_BLUE}, LIGHT_PURPLE: {COLOR_LIGHT_PURPLE}, and so on...
+    # BOLD: {FORMAT_BOLD}, STRIKETHROUGH: {FORMAT_STRIKETHROUGH}, UNDERLINE: {FORMAT_UNDERLINE}, ITALIC: {FORMAT_ITALIC}
+    # RESET: {FORMAT_RESET}
+    default: "{COLOR_YELLOW}{FORMAT_BOLD}[Guest]{COLOR_WHITE}{FORMAT_RESET} {display_name} {COLOR_GRAY}> {message}"
     worlds: [] 
   Admin:
-    default: "[Admin] {display_name} > {message}"
+    default: "{COLOR_AQUA}{FORMAT_BOLD}[Admin]{COLOR_WHITE}{FORMAT_RESET} {display_name} {COLOR_GRAY}> {message}"
     worlds: []
   Owner: 
-    default: "[Owner] {display_name} > {message}"
+    default: "{COLOR_GREEN}{FORMAT_BOLD}[Owner]{COLOR_WHITE}{FORMAT_RESET} {display_name} {COLOR_GRAY}> {message}"
     worlds: []
 ...
