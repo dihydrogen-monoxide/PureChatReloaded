@@ -22,6 +22,9 @@ groups:
     default: "{COLOR_AQUA}{FORMAT_BOLD}[Admin]{COLOR_WHITE}{FORMAT_RESET} {display_name} {COLOR_GRAY}> {message}"
     worlds: []
   Owner: 
-    default: "{COLOR_GREEN}{FORMAT_BOLD}[Owner]{COLOR_WHITE}{FORMAT_RESET} {display_name} {COLOR_GRAY}> {message}"
+    default: "{COLOR_BLUE}{FORMAT_BOLD}[Owner]{COLOR_WHITE}{FORMAT_RESET} {display_name} {COLOR_GRAY}> {message}"
+    worlds: []
+  OP: 
+    default: "{COLOR_GREEN}{FORMAT_BOLD}[OP]{COLOR_WHITE}{FORMAT_RESET} {display_name} {COLOR_GRAY}> {message}"
     worlds: []
 ...
