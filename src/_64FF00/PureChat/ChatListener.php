@@ -5,22 +5,22 @@ namespace _64FF00\PureChat;
 use pocketmine\event\Listener;
 
 use pocketmine\event\player\PlayerChatEvent;
+use pocketmine\event\player\PlayerJoinEvent;
 
+/* PurePerms by 64FF00 (xktiverz@gmail.com, @64ff00 for Twitter) */
+/*
+      # #    #####  #       ####### #######   ###     ###   
+      # #   #     # #    #  #       #        #   #   #   #  
+    ####### #       #    #  #       #       #     # #     # 
+      # #   ######  #    #  #####   #####   #     # #     # 
+    ####### #     # ####### #       #       #     # #     # 
+      # #   #     #      #  #       #        #   #   #   #  
+      # #    #####       #  #       #         ###     ###                                        
+                                                                                       
+*/
+    
 class ChatListener implements Listener
 {
-    /* PurePerms by 64FF00 (xktiverz@gmail.com, @64ff00 for Twitter) */
-
-    /*
-          # #    #####  #       ####### #######   ###     ###   
-          # #   #     # #    #  #       #        #   #   #   #  
-        ####### #       #    #  #       #       #     # #     # 
-          # #   ######  #    #  #####   #####   #     # #     # 
-        ####### #     # ####### #       #       #     # #     # 
-          # #   #     #      #  #       #        #   #   #   #  
-          # #    #####       #  #       #         ###     ###                                        
-                                                                                       
-    */
-
     private $plugin;
     
     public function __construct(PureChat $plugin)
@@ -36,12 +36,25 @@ class ChatListener implements Listener
     {
         $player = $event->getPlayer();
         
-        $isMultiWorldFormatsEnabled = $this->plugin->getConfig()->get("enable-multiworld-formats");
+        $isMultiWorldSupportEnabled = $this->plugin->getConfig()->get("enable-multiworld-support");
         
-        $levelName = $isMultiWorldFormatsEnabled ?  $player->getLevel()->getName() : null;
+        $levelName = $isMultiWorldSupportEnabled ?  $player->getLevel()->getName() : null;
         
         $chatFormat = $this->plugin->formatMessage($player, $event->getMessage(), $levelName);
         
         $event->setFormat($chatFormat);
     }
+    
+    public function onPlayerJoin(PlayerJoinEvent $event)
+	{
+		$player = $event->getPlayer();
+        
+        $isMultiWorldSupportEnabled = $this->plugin->getConfig()->get("enable-multiworld-support");
+        
+        $levelName = $isMultiWorldSupportEnabled ?  $player->getLevel()->getName() : null;
+        
+        $nameTag = $this->plugin->getNameTag($player, $levelName);
+		
+		$player->setNameTag($nameTag);
+	}
 }

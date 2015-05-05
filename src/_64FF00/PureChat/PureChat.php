@@ -8,6 +8,7 @@ use pocketmine\plugin\PluginBase;
 
 use pocketmine\utils\TextFormat;
 
+/* PurePerms by 64FF00 (xktiverz@gmail.com, @64ff00 for Twitter) */
 /*
       # #    #####  #       ####### #######   ###     ###   
       # #   #     # #    #  #       #        #   #   #   #  
@@ -16,24 +17,11 @@ use pocketmine\utils\TextFormat;
     ####### #     # ####### #       #       #     # #     # 
       # #   #     #      #  #       #        #   #   #   #  
       # #    #####       #  #       #         ###     ###                                        
-                                                                                   
+                                                                                       
 */
 
 class PureChat extends PluginBase
 {
-    /* PurePerms by 64FF00 (xktiverz@gmail.com, @64ff00 for Twitter) */
-
-    /*
-          # #    #####  #       ####### #######   ###     ###   
-          # #   #     # #    #  #       #        #   #   #   #  
-        ####### #       #    #  #       #       #     # #     # 
-          # #   ######  #    #  #####   #####   #     # #     # 
-        ####### #     # ####### #       #       #     # #     # 
-          # #   #     #      #  #       #        #   #   #   #  
-          # #    #####       #  #       #         ###     ###                                        
-                                                                                       
-    */
-    
     private $config, $plugin, $factionsPro;
     
     public function onLoad()
@@ -91,23 +79,23 @@ class PureChat extends PluginBase
         
         if($levelName == null)
         {
-            if($this->getConfig()->getNested("groups.$groupName.default") == null)
+            if($this->getConfig()->getNested("groups.$groupName.default-chat") == null)
             {
-                $this->getConfig()->setNested("groups.$groupName.default", "[$groupName] {display_name} > {message}");
+                $this->getConfig()->setNested("groups.$groupName.default-chat", "[$groupName] {display_name} > {message}");
             }
             
-            $chatFormat = $this->getConfig()->getNested("groups.$groupName.default");
+            $chatFormat = $this->getConfig()->getNested("groups.$groupName.default-chat");
         }
         else
         {
-            if($this->getConfig()->getNested("groups.$groupName.worlds.$levelName") == null)
+            if($this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-chat") == null)
             {
-                $this->getConfig()->setNested("groups.$groupName.worlds.$levelName", "[$groupName] {display_name} > {message}");
+                $this->getConfig()->setNested("groups.$groupName.worlds.$levelName.default-chat", "[$groupName] {display_name} > {message}");
                 
                 $this->getConfig()->save();
             }
             
-            $chatFormat = $this->getConfig()->getNested("groups.$groupName.worlds.$levelName");
+            $chatFormat = $this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-chat");
         }
         
         $chatFormat = str_replace("{world_name}", $levelName, $chatFormat);
@@ -126,5 +114,39 @@ class PureChat extends PluginBase
         }
         
         return $this->addColors($chatFormat);
+    }
+    
+    public function getNametag(Player $player, $levelName)
+    {
+        $group = $this->PurePerms->getUser($player)->getGroup($levelName);
+        
+        $groupName = $group->getName();
+        
+        if($levelName == null)
+        {
+            if($this->getConfig()->getNested("groups.$groupName.default-nametag") == null)
+            {
+                $this->getConfig()->setNested("groups.$groupName.default-nametag", "[$groupName] {display_name}");
+            }
+            
+            $nameTag = $this->getConfig()->getNested("groups.$groupName.default-nametag");
+        }
+        else
+        {
+            if($this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-nametag") == null)
+            {
+                $this->getConfig()->setNested("groups.$groupName.worlds.$levelName.default-nametag", "[$groupName] {display_name}");
+                
+                $this->getConfig()->save();
+            }
+            
+            $nameTag = $this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-nametag");
+        }
+        
+        $nameTag = str_replace("{world_name}", $levelName, $nameTag);
+        $nameTag = str_replace("{display_name}", $player->getDisplayName(), $nameTag);
+        $nameTag = str_replace("{user_name}", $player->getName(), $nameTag);
+        
+        return $this->addColors($nameTag);
     }
 }
