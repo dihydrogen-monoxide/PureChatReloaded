@@ -46,15 +46,15 @@ class ChatListener implements Listener
     }
     
     public function onPlayerJoin(PlayerJoinEvent $event)
-	{
-		$player = $event->getPlayer();
+    {
+        $player = $event->getPlayer();
         
         $isMultiWorldSupportEnabled = $this->plugin->getConfig()->get("enable-multiworld-support");
         
         $levelName = $isMultiWorldSupportEnabled ?  $player->getLevel()->getName() : null;
         
         $nameTag = $this->plugin->getNameTag($player, $levelName);
-		
-		$player->setNameTag($nameTag);
-	}
+        
+        $player->setNameTag($nameTag);
+    }
 }
