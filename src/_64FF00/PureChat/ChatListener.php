@@ -44,7 +44,10 @@ class ChatListener implements Listener
         
         $event->setFormat($chatFormat);
     }
-    
+
+    /**
+     * @param PlayerJoinEvent $event
+     */
     public function onPlayerJoin(PlayerJoinEvent $event)
     {
         $player = $event->getPlayer();

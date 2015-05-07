@@ -40,7 +40,11 @@ class PureChat extends PluginBase
     public function onDisable()
     {
     }
-    
+
+    /**
+     * @param $chatFormat
+     * @return mixed
+     */
     public function addColors($chatFormat)
     {
         $chatFormat = str_replace("{COLOR_BLACK}", TextFormat::BLACK, $chatFormat);
@@ -70,7 +74,13 @@ class PureChat extends PluginBase
         
         return $chatFormat;
     }
-    
+
+    /**
+     * @param Player $player
+     * @param $message
+     * @param null $levelName
+     * @return mixed
+     */
     public function formatMessage(Player $player, $message, $levelName = null)
     {
         $group = $this->PurePerms->getUser($player)->getGroup($levelName);
@@ -115,7 +125,12 @@ class PureChat extends PluginBase
         
         return $this->addColors($chatFormat);
     }
-    
+
+    /**
+     * @param Player $player
+     * @param $levelName
+     * @return mixed
+     */
     public function getNametag(Player $player, $levelName)
     {
         $group = $this->PurePerms->getUser($player)->getGroup($levelName);
