@@ -2,7 +2,7 @@
 
 namespace _64FF00\PureChat;
 
-use _64FF00\PurePerms\event\PPGroupChangeEvent;
+use _64FF00\PurePerms\event\PPGroupChangedEvent;
 
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
@@ -32,7 +32,7 @@ class ChatListener implements Listener
     /**
      * @param PPGroupChangeEvent $event
      */
-    public function onGroupChange(PPGroupChangeEvent $event)
+    public function onGroupChanged(PPGroupChangedEvent $event)
     {
         $player = $event->getPlayer();
 
