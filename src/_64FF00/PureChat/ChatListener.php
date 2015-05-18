@@ -8,6 +8,8 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 
+use pocketmine\Player;
+
 /* PurePerms by 64FF00 (xktiverz@gmail.com, @64ff00 for Twitter) */
 /*
       # #    #####  #       ####### #######   ###     ###   
@@ -36,13 +38,16 @@ class ChatListener implements Listener
     {
         $player = $event->getPlayer();
 
-        $isMultiWorldSupportEnabled = $this->plugin->getConfig()->get("enable-multiworld-support");
+        if($player instanceof Player)
+        {
+            $isMultiWorldSupportEnabled = $this->plugin->getConfig()->get("enable-multiworld-support");
 
-        $levelName = $isMultiWorldSupportEnabled ?  $player->getLevel()->getName() : null;
+            $levelName = $isMultiWorldSupportEnabled ? $player->getLevel()->getName() : null;
 
-        $nameTag = $this->plugin->getNameTag($player, $levelName);
+            $nameTag = $this->plugin->getNameTag($player, $levelName);
 
-        $player->setNameTag($nameTag);
+            $player->setNameTag($nameTag);
+        }
     }
     
     /**
