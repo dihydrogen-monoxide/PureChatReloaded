@@ -22,7 +22,7 @@ use pocketmine\utils\TextFormat;
 
 class PureChat extends PluginBase
 {
-    private $config, $plugin, $factionsPro;
+    private $factionsPro;
     
     public function onLoad()
     {
