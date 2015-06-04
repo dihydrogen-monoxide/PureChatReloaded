@@ -8,7 +8,7 @@ use pocketmine\plugin\PluginBase;
 
 use pocketmine\utils\TextFormat;
 
-/* PurePerms by 64FF00 (xktiverz@gmail.com, @64ff00 for Twitter) */
+/* PureChat by 64FF00 (xktiverz@gmail.com, @64ff00 for Twitter) */
 /*
       # #    #####  #       ####### #######   ###     ###   
       # #   #     # #    #  #       #        #   #   #   #  
