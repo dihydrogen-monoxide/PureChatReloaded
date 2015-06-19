@@ -7,3 +7,9 @@ author: 64FF00
 website: https://github.com/PurePlugins/PureChat
 depend: [PurePerms]
 softdepend: [FactionsPro]
+permissions:
+  pchat:
+    description: "PureChat by 64FF00! (Twitter: @64FF00)"
+    children:
+      pchat.colored:
+        description: "Allows the users to use colored chat and nametags"
