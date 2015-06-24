@@ -107,20 +107,20 @@ class PureChat extends PluginBase
             
             $pChatFormat = $this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-chat");
         }
-        
-        $chatFormat = str_replace("{world_name}", $levelName, $chatFormat);
-        $chatFormat = str_replace("{display_name}", $player->getDisplayName(), $chatFormat);
-        $chatFormat = str_replace("{user_name}", $player->getName(), $chatFormat);
-        $chatFormat = str_replace("{message}", $message, $chatFormat);
+
+        $pChatFormat = str_replace("{world_name}", $levelName, $pChatFormat);
+        $pChatFormat = str_replace("{display_name}", $player->getDisplayName(), $pChatFormat);
+        $pChatFormat = str_replace("{user_name}", $player->getName(), $pChatFormat);
+        $pChatFormat = str_replace("{message}", $message, $pChatFormat);
         
         if($this->factionsPro != null) 
         {
             if(!$this->factionsPro->isInFaction($player->getName()))
             {
-                $chatFormat = str_replace("{faction}", "...", $chatFormat);
+                $pChatFormat = str_replace("{faction}", "...", $pChatFormat);
             }
-            
-            $chatFormat = str_replace("{faction}", $this->factionsPro->getPlayerFaction($player->getName()), $chatFormat);
+
+            $pChatFormat = str_replace("{faction}", $this->factionsPro->getPlayerFaction($player->getName()), $pChatFormat);
         }
         
         if(!$player->hasPermission("pchat.colored")) return $this->removeColors($pChatFormat);
