@@ -27,6 +27,11 @@ class PureChat extends PluginBase
     public function onLoad()
     {
         $this->saveDefaultConfig();
+        
+        if($this->getConfig()->getNested("enable-multiworld-support"))
+        {
+            $this->getLogger()->notice("Successfully enabled PureChat multiworld support");
+        }
     }
     
     public function onEnable()
@@ -116,11 +121,18 @@ class PureChat extends PluginBase
         if($this->factionsPro != null) 
         {
             if(!$this->factionsPro->isInFaction($player->getName()))
-            {
+            {            
                 $pChatFormat = str_replace("{faction}", "...", $pChatFormat);
             }
 
-            $pChatFormat = str_replace("{faction}", $this->factionsPro->getPlayerFaction($player->getName()), $pChatFormat);
+            if($this->factionsPro->isLeader($player->getName()))
+            {
+                $pChatFormat = str_replace("{faction}", "**" . $this->factionsPro->getPlayerFaction($player->getName()), $pChatFormat);
+            }
+            else
+            {
+                $pChatFormat = str_replace("{faction}", "*" . $this->factionsPro->getPlayerFaction($player->getName()), $pChatFormat);
+            }
         }
         
         if(!$player->hasPermission("pchat.colored")) return $this->removeColors($pChatFormat);
@@ -163,6 +175,25 @@ class PureChat extends PluginBase
         $nameTag = str_replace("{world_name}", $levelName, $nameTag);
         $nameTag = str_replace("{display_name}", $player->getDisplayName(), $nameTag);
         $nameTag = str_replace("{user_name}", $player->getName(), $nameTag);
+        
+        if($this->factionsPro != null) 
+        {
+            if(!$this->factionsPro->isInFaction($player->getName()))
+            {            
+                $nameTag = str_replace("{faction}", "...", $nameTag);
+            }
+
+            if($this->factionsPro->isLeader($player->getName()))
+            {
+                $nameTag = str_replace("{faction}", "**" . $this->factionsPro->getPlayerFaction($player->getName()), $nameTag);
+            }
+            else
+            {
+                $nameTag = str_replace("{faction}", "*" . $this->factionsPro->getPlayerFaction($player->getName()), $nameTag);
+            }
+        }
+        
+        if(!$player->hasPermission("pchat.colored")) return $this->removeColors($nameTag);
         
         return $this->addColors($nameTag);
     }
