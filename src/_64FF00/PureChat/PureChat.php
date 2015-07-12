@@ -47,37 +47,37 @@ class PureChat extends PluginBase
     }
 
     /**
-     * @param $pChatFormat
+     * @param $chatFormat
      * @return mixed
      */
-    public function addColors($pChatFormat)
+    public function addColors($chatFormat)
     {
-        $pChatFormat = str_replace("{COLOR_BLACK}", TextFormat::BLACK, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_DARK_BLUE}", TextFormat::DARK_BLUE, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_DARK_GREEN}", TextFormat::DARK_GREEN, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_DARK_AQUA}", TextFormat::DARK_AQUA, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_DARK_RED}", TextFormat::DARK_RED, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_DARK_PURPLE}", TextFormat::DARK_PURPLE, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_GOLD}", TextFormat::GOLD, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_GRAY}", TextFormat::GRAY, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_DARK_GRAY}", TextFormat::DARK_GRAY, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_BLUE}", TextFormat::BLUE, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_GREEN}", TextFormat::GREEN, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_AQUA}", TextFormat::AQUA, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_RED}", TextFormat::RED, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_LIGHT_PURPLE}", TextFormat::LIGHT_PURPLE, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_YELLOW}", TextFormat::YELLOW, $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_WHITE}", TextFormat::WHITE, $pChatFormat);
-        
-        $pChatFormat = str_replace("{FORMAT_OBFUSCATED}", TextFormat::OBFUSCATED, $pChatFormat);
-        $pChatFormat = str_replace("{FORMAT_BOLD}", TextFormat::BOLD, $pChatFormat);
-        $pChatFormat = str_replace("{FORMAT_STRIKETHROUGH}", TextFormat::STRIKETHROUGH, $pChatFormat);
-        $pChatFormat = str_replace("{FORMAT_UNDERLINE}", TextFormat::UNDERLINE, $pChatFormat);
-        $pChatFormat = str_replace("{FORMAT_ITALIC}", TextFormat::ITALIC, $pChatFormat);
-        
-        $pChatFormat = str_replace("{FORMAT_RESET}", TextFormat::RESET, $pChatFormat);
-        
-        return $pChatFormat;
+        $chatFormat = str_replace("{COLOR_BLACK}", TextFormat::BLACK, $chatFormat);
+        $chatFormat = str_replace("{COLOR_DARK_BLUE}", TextFormat::DARK_BLUE, $chatFormat);
+        $chatFormat = str_replace("{COLOR_DARK_GREEN}", TextFormat::DARK_GREEN, $chatFormat);
+        $chatFormat = str_replace("{COLOR_DARK_AQUA}", TextFormat::DARK_AQUA, $chatFormat);
+        $chatFormat = str_replace("{COLOR_DARK_RED}", TextFormat::DARK_RED, $chatFormat);
+        $chatFormat = str_replace("{COLOR_DARK_PURPLE}", TextFormat::DARK_PURPLE, $chatFormat);
+        $chatFormat = str_replace("{COLOR_GOLD}", TextFormat::GOLD, $chatFormat);
+        $chatFormat = str_replace("{COLOR_GRAY}", TextFormat::GRAY, $chatFormat);
+        $chatFormat = str_replace("{COLOR_DARK_GRAY}", TextFormat::DARK_GRAY, $chatFormat);
+        $chatFormat = str_replace("{COLOR_BLUE}", TextFormat::BLUE, $chatFormat);
+        $chatFormat = str_replace("{COLOR_GREEN}", TextFormat::GREEN, $chatFormat);
+        $chatFormat = str_replace("{COLOR_AQUA}", TextFormat::AQUA, $chatFormat);
+        $chatFormat = str_replace("{COLOR_RED}", TextFormat::RED, $chatFormat);
+        $chatFormat = str_replace("{COLOR_LIGHT_PURPLE}", TextFormat::LIGHT_PURPLE, $chatFormat);
+        $chatFormat = str_replace("{COLOR_YELLOW}", TextFormat::YELLOW, $chatFormat);
+        $chatFormat = str_replace("{COLOR_WHITE}", TextFormat::WHITE, $chatFormat);
+
+        $chatFormat = str_replace("{FORMAT_OBFUSCATED}", TextFormat::OBFUSCATED, $chatFormat);
+        $chatFormat = str_replace("{FORMAT_BOLD}", TextFormat::BOLD, $chatFormat);
+        $chatFormat = str_replace("{FORMAT_STRIKETHROUGH}", TextFormat::STRIKETHROUGH, $chatFormat);
+        $chatFormat = str_replace("{FORMAT_UNDERLINE}", TextFormat::UNDERLINE, $chatFormat);
+        $chatFormat = str_replace("{FORMAT_ITALIC}", TextFormat::ITALIC, $chatFormat);
+
+        $chatFormat = str_replace("{FORMAT_RESET}", TextFormat::RESET, $chatFormat);
+
+        return $chatFormat;
     }
 
     /**
@@ -98,8 +98,8 @@ class PureChat extends PluginBase
             {
                 $this->getConfig()->setNested("groups.$groupName.default-chat", "[$groupName] {display_name} > {message}");
             }
-            
-            $pChatFormat = $this->getConfig()->getNested("groups.$groupName.default-chat");
+
+            $chatFormat = $this->getConfig()->getNested("groups.$groupName.default-chat");
         }
         else
         {
@@ -109,35 +109,41 @@ class PureChat extends PluginBase
                 
                 $this->getConfig()->save();
             }
-            
-            $pChatFormat = $this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-chat");
+
+            $chatFormat = $this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-chat");
         }
 
-        $pChatFormat = str_replace("{world_name}", $levelName, $pChatFormat);
-        $pChatFormat = str_replace("{display_name}", $player->getDisplayName(), $pChatFormat);
-        $pChatFormat = str_replace("{user_name}", $player->getName(), $pChatFormat);
-        $pChatFormat = str_replace("{message}", $message, $pChatFormat);
+        $chatFormat = str_replace("{world_name}", $levelName, $chatFormat);
+        $chatFormat = str_replace("{display_name}", $player->getDisplayName(), $chatFormat);
+        $chatFormat = str_replace("{user_name}", $player->getName(), $chatFormat);
+        $chatFormat = str_replace("{message}", $message, $chatFormat);
         
         if($this->factionsPro != null) 
         {
             if(!$this->factionsPro->isInFaction($player->getName()))
-            {            
-                $pChatFormat = str_replace("{faction}", "...", $pChatFormat);
+            {
+                $chatFormat = str_replace("{faction}", "...", $chatFormat);
             }
 
             if($this->factionsPro->isLeader($player->getName()))
             {
-                $pChatFormat = str_replace("{faction}", "**" . $this->factionsPro->getPlayerFaction($player->getName()), $pChatFormat);
+                $chatFormat = str_replace("{faction}", "**" . $this->factionsPro->getPlayerFaction($player->getName()), $chatFormat);
+            }
+            elseif($this->factionsPro->isOfficer($player->getName()))
+            {
+                $chatFormat = str_replace("{faction}", "*" . $this->factionsPro->getPlayerFaction($player->getName()), $chatFormat);
             }
             else
             {
-                $pChatFormat = str_replace("{faction}", "*" . $this->factionsPro->getPlayerFaction($player->getName()), $pChatFormat);
+                $chatFormat = str_replace("{faction}", "" . $this->factionsPro->getPlayerFaction($player->getName()), $chatFormat);
             }
         }
-        
-        if(!$player->hasPermission("pchat.colored")) return $this->removeColors($pChatFormat);
-        
-        return $this->addColors($pChatFormat);
+
+        $chatFormat = $this->addColors($chatFormat);
+
+        if(!$player->hasPermission("pchat.colored")) $chatFormat = $this->removeColors($chatFormat);
+
+        return $chatFormat;
     }
 
     /**
@@ -187,44 +193,54 @@ class PureChat extends PluginBase
             {
                 $nameTag = str_replace("{faction}", "**" . $this->factionsPro->getPlayerFaction($player->getName()), $nameTag);
             }
-            else
+            elseif($this->factionsPro->isOfficer($player->getName()))
             {
                 $nameTag = str_replace("{faction}", "*" . $this->factionsPro->getPlayerFaction($player->getName()), $nameTag);
             }
+            else
+            {
+                $nameTag = str_replace("{faction}", "" . $this->factionsPro->getPlayerFaction($player->getName()), $nameTag);
+            }
         }
-        
-        if(!$player->hasPermission("pchat.colored")) return $this->removeColors($nameTag);
-        
-        return $this->addColors($nameTag);
+
+        $nameTag = $this->addColors($nameTag);
+
+        if(!$player->hasPermission("pchat.colored")) $nameTag = $this->removeColors($nameTag);
+
+        return $nameTag;
     }
-    
-    public function removeColors($pChatFormat)
+
+    /**
+     * @param $chatFormat
+     * @return mixed
+     */
+    public function removeColors($chatFormat)
     {
-        $pChatFormat = str_replace("{COLOR_BLACK}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_DARK_BLUE}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_DARK_GREEN}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_DARK_AQUA}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_DARK_RED}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_DARK_PURPLE}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_GOLD}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_GRAY}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_DARK_GRAY}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_BLUE}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_GREEN}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_AQUA}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_RED}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_LIGHT_PURPLE}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_YELLOW}", "", $pChatFormat);
-        $pChatFormat = str_replace("{COLOR_WHITE}", "", $pChatFormat);
-        
-        $pChatFormat = str_replace("{FORMAT_OBFUSCATED}", "", $pChatFormat);
-        $pChatFormat = str_replace("{FORMAT_BOLD}", "", $pChatFormat);
-        $pChatFormat = str_replace("{FORMAT_STRIKETHROUGH}", "", $pChatFormat);
-        $pChatFormat = str_replace("{FORMAT_UNDERLINE}", "", $pChatFormat);
-        $pChatFormat = str_replace("{FORMAT_ITALIC}", "", $pChatFormat);
-        
-        $pChatFormat = str_replace("{FORMAT_RESET}", "", $pChatFormat);
-        
-        return $pChatFormat;
+        $chatFormat = str_replace("{COLOR_BLACK}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_DARK_BLUE}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_DARK_GREEN}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_DARK_AQUA}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_DARK_RED}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_DARK_PURPLE}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_GOLD}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_GRAY}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_DARK_GRAY}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_BLUE}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_GREEN}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_AQUA}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_RED}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_LIGHT_PURPLE}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_YELLOW}", "", $chatFormat);
+        $chatFormat = str_replace("{COLOR_WHITE}", "", $chatFormat);
+
+        $chatFormat = str_replace("{FORMAT_OBFUSCATED}", "", $chatFormat);
+        $chatFormat = str_replace("{FORMAT_BOLD}", "", $chatFormat);
+        $chatFormat = str_replace("{FORMAT_STRIKETHROUGH}", "", $chatFormat);
+        $chatFormat = str_replace("{FORMAT_UNDERLINE}", "", $chatFormat);
+        $chatFormat = str_replace("{FORMAT_ITALIC}", "", $chatFormat);
+
+        $chatFormat = str_replace("{FORMAT_RESET}", "", $chatFormat);
+
+        return $chatFormat;
     }
 }
