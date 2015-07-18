@@ -6,6 +6,10 @@
 # - true / false
 enable-multiworld-support: false
 
+# Allows you to set custom no-faction message
+# - STRING
+custom-no-fac-message: "..."
+
 # A list of all PurePerms groups
 groups:
   Guest:
@@ -33,6 +37,6 @@ groups:
     worlds: []
   OP: 
     default-chat: "{COLOR_GREEN}{FORMAT_BOLD}[OP]{COLOR_WHITE}{FORMAT_RESET} {display_name} {COLOR_GRAY}> {message}"
-    default-nametag: "{COLOR_BLUE}{FORMAT_BOLD}[Owner]{COLOR_WHITE}{FORMAT_RESET} {display_name}"
+    default-nametag: "{COLOR_BLUE}{FORMAT_BOLD}[OP]{COLOR_WHITE}{FORMAT_RESET} {display_name}"
     worlds: []
 ...

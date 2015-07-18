@@ -97,6 +97,8 @@ class PureChat extends PluginBase
             if($this->getConfig()->getNested("groups.$groupName.default-chat") == null)
             {
                 $this->getConfig()->setNested("groups.$groupName.default-chat", "[$groupName] {display_name} > {message}");
+
+                $this->saveConfig();
             }
 
             $chatFormat = $this->getConfig()->getNested("groups.$groupName.default-chat");
@@ -107,7 +109,7 @@ class PureChat extends PluginBase
             {
                 $this->getConfig()->setNested("groups.$groupName.worlds.$levelName.default-chat", "[$groupName] {display_name} > {message}");
                 
-                $this->getConfig()->save();
+                $this->saveConfig();
             }
 
             $chatFormat = $this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-chat");
@@ -120,9 +122,16 @@ class PureChat extends PluginBase
         
         if($this->factionsPro != null) 
         {
+            if($this->getConfig()->getNested("custom-no-fac-message") == null)
+            {
+                $this->getConfig()->setNested("custom-no-fac-message", "...");
+
+                $this->saveConfig();
+            }
+
             if(!$this->factionsPro->isInFaction($player->getName()))
             {
-                $chatFormat = str_replace("{faction}", "...", $chatFormat);
+                $chatFormat = str_replace("{faction}", $this->getConfig()->getNested("custom-no-fac-message"), $chatFormat);
             }
 
             if($this->factionsPro->isLeader($player->getName()))
@@ -184,9 +193,16 @@ class PureChat extends PluginBase
         
         if($this->factionsPro != null) 
         {
+            if($this->getConfig()->getNested("custom-no-fac-message") == null)
+            {
+                $this->getConfig()->setNested("custom-no-fac-message", "...");
+
+                $this->saveConfig();
+            }
+
             if(!$this->factionsPro->isInFaction($player->getName()))
             {            
-                $nameTag = str_replace("{faction}", "...", $nameTag);
+                $nameTag = str_replace("{faction}", $this->getConfig()->getNested("custom-no-fac-message"), $nameTag);
             }
 
             if($this->factionsPro->isLeader($player->getName()))
