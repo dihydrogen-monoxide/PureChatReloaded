@@ -6,7 +6,7 @@
 # - true / false
 enable-multiworld-support: false
 
-# Allows you to set custom no-faction message
+# This message will be shown replacing th {faction} tag when a player is not in any faction
 # - STRING
 custom-no-fac-message: "..."
 
