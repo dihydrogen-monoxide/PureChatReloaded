@@ -41,10 +41,6 @@ class PureChat extends PluginBase
         
         $this->getServer()->getPluginManager()->registerEvents(new ChatListener($this), $this);
     }
-    
-    public function onDisable()
-    {
-    }
 
     /**
      * @param $chatFormat
@@ -148,10 +144,6 @@ class PureChat extends PluginBase
             }
         }
 
-        $chatFormat = $this->addColors($chatFormat);
-
-        if(!$player->hasPermission("pchat.colored")) $chatFormat = $this->removeColors($chatFormat);
-
         return $chatFormat;
     }
 
@@ -218,10 +210,6 @@ class PureChat extends PluginBase
                 $nameTag = str_replace("{faction}", "" . $this->factionsPro->getPlayerFaction($player->getName()), $nameTag);
             }
         }
-
-        $nameTag = $this->addColors($nameTag);
-
-        if(!$player->hasPermission("pchat.colored")) $nameTag = $this->removeColors($nameTag);
 
         return $nameTag;
     }

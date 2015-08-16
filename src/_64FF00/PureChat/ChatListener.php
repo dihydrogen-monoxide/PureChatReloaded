@@ -46,6 +46,15 @@ class ChatListener implements Listener
 
             $nameTag = $this->plugin->getNameTag($player, $levelName);
 
+            if($player->hasPermission("pchat.colored"))
+            {
+                $nameTag = $this->addColors($nameTag);
+            }
+            else
+            {
+                $nameTag = $this->removeColors($nameTag);
+            }
+
             $player->setNameTag($nameTag);
         }
     }
@@ -63,6 +72,15 @@ class ChatListener implements Listener
         $levelName = $isMultiWorldSupportEnabled ?  $player->getLevel()->getName() : null;
         
         $chatFormat = $this->plugin->formatMessage($player, $event->getMessage(), $levelName);
+
+        if($player->hasPermission("pchat.colored"))
+        {
+            $chatFormat = $this->addColors($chatFormat);
+        }
+        else
+        {
+            $chatFormat = $this->removeColors($chatFormat);
+        }
         
         $event->setFormat($chatFormat);
     }
@@ -79,7 +97,16 @@ class ChatListener implements Listener
         $levelName = $isMultiWorldSupportEnabled ?  $player->getLevel()->getName() : null;
 
         $nameTag = $this->plugin->getNameTag($player, $levelName);
-        
+
+        if($player->hasPermission("pchat.colored"))
+        {
+            $nameTag = $this->addColors($nameTag);
+        }
+        else
+        {
+            $nameTag = $this->removeColors($nameTag);
+        }
+
         $player->setNameTag($nameTag);
     }
 }
