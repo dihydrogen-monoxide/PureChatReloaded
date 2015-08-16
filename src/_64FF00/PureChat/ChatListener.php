@@ -32,7 +32,7 @@ class ChatListener implements Listener
     }
 
     /**
-     * @param PPGroupChangeEvent $event
+     * @param PPGroupChangedEvent $event
      */
     public function onGroupChanged(PPGroupChangedEvent $event)
     {
@@ -48,11 +48,11 @@ class ChatListener implements Listener
 
             if($player->hasPermission("pchat.colored"))
             {
-                $nameTag = $this->addColors($nameTag);
+                $nameTag = $this->plugin->addColors($nameTag);
             }
             else
             {
-                $nameTag = $this->removeColors($nameTag);
+                $nameTag = $this->plugin->removeColors($nameTag);
             }
 
             $player->setNameTag($nameTag);
@@ -75,11 +75,11 @@ class ChatListener implements Listener
 
         if($player->hasPermission("pchat.colored"))
         {
-            $chatFormat = $this->addColors($chatFormat);
+            $chatFormat = $this->plugin->addColors($chatFormat);
         }
         else
         {
-            $chatFormat = $this->removeColors($chatFormat);
+            $chatFormat = $this->plugin->removeColors($chatFormat);
         }
         
         $event->setFormat($chatFormat);
@@ -100,11 +100,11 @@ class ChatListener implements Listener
 
         if($player->hasPermission("pchat.colored"))
         {
-            $nameTag = $this->addColors($nameTag);
+            $nameTag = $this->plugin->addColors($nameTag);
         }
         else
         {
-            $nameTag = $this->removeColors($nameTag);
+            $nameTag = $this->plugin->removeColors($nameTag);
         }
 
         $player->setNameTag($nameTag);
