@@ -46,7 +46,7 @@ class ChatListener implements Listener
 
             $nameTag = $this->plugin->getNameTag($player, $levelName);
 
-            if($player->hasPermission("pchat.colored"))
+            if($player->hasPermission("pchat.colored.nametag"))
             {
                 $nameTag = $this->plugin->addColors($nameTag);
             }

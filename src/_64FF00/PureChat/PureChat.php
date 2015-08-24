@@ -112,14 +112,11 @@ class PureChat extends PluginBase
         $chatFormat = str_replace("{display_name}", $player->getDisplayName(), $chatFormat);
         $chatFormat = str_replace("{user_name}", $player->getName(), $chatFormat);
 
-        if($player->hasPermission("pchat.colored.chat"))
-        {
-            $chatFormat = str_replace("{message}", $message, $chatFormat);
-        }
-        else
-        {
-            $chatFormat = str_replace("{message}", $this->removeColors($message), $chatFormat);
-        }
+        $message = $this->addColors($message);
+
+        if(!$player->hasPermission("pchat.colored.chat")) $message = $this->removeColors($message);
+
+        $chatFormat = str_replace("{message}", $message, $chatFormat);
         
         if($this->factionsPro != null) 
         {
