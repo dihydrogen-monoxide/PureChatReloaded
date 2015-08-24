@@ -28,10 +28,7 @@ class PureChat extends PluginBase
     {
         $this->saveDefaultConfig();
         
-        if($this->getConfig()->getNested("enable-multiworld-support"))
-        {
-            $this->getLogger()->notice("Successfully enabled PureChat multiworld support");
-        }
+        if($this->getConfig()->getNested("enable-multiworld-support")) $this->getLogger()->notice("Successfully enabled PureChat multiworld support");
     }
     
     public function onEnable()
@@ -114,7 +111,15 @@ class PureChat extends PluginBase
         $chatFormat = str_replace("{world_name}", $levelName, $chatFormat);
         $chatFormat = str_replace("{display_name}", $player->getDisplayName(), $chatFormat);
         $chatFormat = str_replace("{user_name}", $player->getName(), $chatFormat);
-        $chatFormat = str_replace("{message}", $message, $chatFormat);
+
+        if($player->hasPermission("pchat.colored.chat"))
+        {
+            $chatFormat = str_replace("{message}", $message, $chatFormat);
+        }
+        else
+        {
+            $chatFormat = str_replace("{message}", $this->removeColors($message), $chatFormat);
+        }
         
         if($this->factionsPro != null) 
         {

@@ -21,7 +21,8 @@ groups:
     # BOLD: {FORMAT_BOLD}, STRIKETHROUGH: {FORMAT_STRIKETHROUGH}, UNDERLINE: {FORMAT_UNDERLINE}, ITALIC: {FORMAT_ITALIC}
     # RESET: {FORMAT_RESET}
     
-    # You might also need to set 'pchat.colored' permission node to your players if you want to allow them to use colored chat and nametags
+    # You might also need to set 'pchat.colored.format' and 'pchat.colored.nametag' to players if you want to allow them to use colored chat and nametags
+    # Use 'pchat.colored.chat' node to allow color codes for players in chat
     default-chat: "{COLOR_YELLOW}{FORMAT_BOLD}[Guest]{COLOR_WHITE}{FORMAT_RESET} {display_name} {COLOR_GRAY}> {message}"
     
     # Almost all of the tags can be applied to nametag formats except {message} tag

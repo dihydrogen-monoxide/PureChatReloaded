@@ -66,14 +66,15 @@ class ChatListener implements Listener
     public function onPlayerChat(PlayerChatEvent $event)
     {
         $player = $event->getPlayer();
+        $message = $event->getMessage();
 
         $isMultiWorldSupportEnabled = $this->plugin->getConfig()->get("enable-multiworld-support");
         
         $levelName = $isMultiWorldSupportEnabled ?  $player->getLevel()->getName() : null;
         
-        $chatFormat = $this->plugin->formatMessage($player, $event->getMessage(), $levelName);
+        $chatFormat = $this->plugin->formatMessage($player, $message, $levelName);
 
-        if($player->hasPermission("pchat.colored"))
+        if($player->hasPermission("pchat.colored.format"))
         {
             $chatFormat = $this->plugin->addColors($chatFormat);
         }
@@ -98,7 +99,7 @@ class ChatListener implements Listener
 
         $nameTag = $this->plugin->getNameTag($player, $levelName);
 
-        if($player->hasPermission("pchat.colored"))
+        if($player->hasPermission("pchat.colored.nametag"))
         {
             $nameTag = $this->plugin->addColors($nameTag);
         }

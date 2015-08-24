@@ -12,4 +12,11 @@ permissions:
     description: "PureChat by 64FF00! (Twitter: @64FF00)"
     children:
       pchat.colored:
-        description: "Allows the players to use colored chat and nametags"
+        description: "Allows the players to get colored chat formats, nametags, and etc."
+        children:
+          pchat.colored.chat:
+            description: "Allows the players to use color codes"
+          pchat.colored.format:
+            description: "Allows the players to use colored chat formats"       
+          pchat.colored.nametag:
+            description: "Allows the players to use colored nametags"               
