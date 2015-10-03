@@ -81,7 +81,7 @@ class PureChat extends PluginBase
      */
     public function formatMessage(Player $player, $message, $levelName = null)
     {
-        $group = $this->PurePerms->getUser($player)->getGroup($levelName);
+        $group = $this->PurePerms->getUserDataMgr()->getGroup($player, $levelName);
         
         $groupName = $group->getName();
         
@@ -156,7 +156,7 @@ class PureChat extends PluginBase
      */
     public function getNameTag(Player $player, $levelName)
     {
-        $group = $this->PurePerms->getUser($player)->getGroup($levelName);
+        $group = $this->PurePerms->getUserDataMgr()->getGroup($player, $levelName);
         
         $groupName = $group->getName();
         
