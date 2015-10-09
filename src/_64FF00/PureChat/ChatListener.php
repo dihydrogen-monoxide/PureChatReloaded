@@ -9,23 +9,27 @@ use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 
 use pocketmine\Player;
-
-/* PureChat by 64FF00 (xktiverz@gmail.com, @64ff00 for Twitter) */
-/*
-      # #    #####  #       ####### #######   ###     ###   
-      # #   #     # #    #  #       #        #   #   #   #  
-    ####### #       #    #  #       #       #     # #     # 
-      # #   ######  #    #  #####   #####   #     # #     # 
-    ####### #     # ####### #       #       #     # #     # 
-      # #   #     #      #  #       #        #   #   #   #  
-      # #    #####       #  #       #         ###     ###                                        
-                                                                                       
-*/
     
 class ChatListener implements Listener
 {
+    /*
+        PurePerms by 64FF00 (Twitter: @64FF00)
+
+          888  888    .d8888b.      d8888  8888888888 8888888888 .d8888b.   .d8888b.
+          888  888   d88P  Y88b    d8P888  888        888       d88P  Y88b d88P  Y88b
+        888888888888 888          d8P 888  888        888       888    888 888    888
+          888  888   888d888b.   d8P  888  8888888    8888888   888    888 888    888
+          888  888   888P "Y88b d88   888  888        888       888    888 888    888
+        888888888888 888    888 8888888888 888        888       888    888 888    888
+          888  888   Y88b  d88P       888  888        888       Y88b  d88P Y88b  d88P
+          888  888    "Y8888P"        888  888        888        "Y8888P"   "Y8888P"
+    */
+
     private $plugin;
-    
+
+    /**
+     * @param PureChat $plugin
+     */
     public function __construct(PureChat $plugin)
     {
         $this->plugin = $plugin;
@@ -45,16 +49,7 @@ class ChatListener implements Listener
             $levelName = $isMultiWorldSupportEnabled ? $player->getLevel()->getName() : null;
 
             $nameTag = $this->plugin->getNameTag($player, $levelName);
-
-            if($player->hasPermission("pchat.colored.nametag"))
-            {
-                $nameTag = $this->plugin->addColors($nameTag);
-            }
-            else
-            {
-                $nameTag = $this->plugin->removeColors($nameTag);
-            }
-
+            
             $player->setNameTag($nameTag);
         }
     }
@@ -71,18 +66,9 @@ class ChatListener implements Listener
         $isMultiWorldSupportEnabled = $this->plugin->getConfig()->get("enable-multiworld-support");
         
         $levelName = $isMultiWorldSupportEnabled ?  $player->getLevel()->getName() : null;
-        
-        $chatFormat = $this->plugin->formatMessage($player, $message, $levelName);
 
-        if($player->hasPermission("pchat.colored.format"))
-        {
-            $chatFormat = $this->plugin->addColors($chatFormat);
-        }
-        else
-        {
-            $chatFormat = $this->plugin->removeColors($chatFormat);
-        }
-        
+        $chatFormat = $this->plugin->getCustomChatFormat($player, $message, $levelName);
+
         $event->setFormat($chatFormat);
     }
 
@@ -98,15 +84,6 @@ class ChatListener implements Listener
         $levelName = $isMultiWorldSupportEnabled ?  $player->getLevel()->getName() : null;
 
         $nameTag = $this->plugin->getNameTag($player, $levelName);
-
-        if($player->hasPermission("pchat.colored.nametag"))
-        {
-            $nameTag = $this->plugin->addColors($nameTag);
-        }
-        else
-        {
-            $nameTag = $this->plugin->removeColors($nameTag);
-        }
 
         $player->setNameTag($nameTag);
     }

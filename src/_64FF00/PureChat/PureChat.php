@@ -8,86 +8,87 @@ use pocketmine\plugin\PluginBase;
 
 use pocketmine\utils\TextFormat;
 
-/* PureChat by 64FF00 (xktiverz@gmail.com, @64ff00 for Twitter) */
-/*
-      # #    #####  #       ####### #######   ###     ###   
-      # #   #     # #    #  #       #        #   #   #   #  
-    ####### #       #    #  #       #       #     # #     # 
-      # #   ######  #    #  #####   #####   #     # #     # 
-    ####### #     # ####### #       #       #     # #     # 
-      # #   #     #      #  #       #        #   #   #   #  
-      # #    #####       #  #       #         ###     ###                                        
-                                                                                       
-*/
-
 class PureChat extends PluginBase
 {
-    private $factionsPro;
+    /*
+        PurePerms by 64FF00 (Twitter: @64FF00)
+
+          888  888    .d8888b.      d8888  8888888888 8888888888 .d8888b.   .d8888b.
+          888  888   d88P  Y88b    d8P888  888        888       d88P  Y88b d88P  Y88b
+        888888888888 888          d8P 888  888        888       888    888 888    888
+          888  888   888d888b.   d8P  888  8888888    8888888   888    888 888    888
+          888  888   888P "Y88b d88   888  888        888       888    888 888    888
+        888888888888 888    888 8888888888 888        888       888    888 888    888
+          888  888   Y88b  d88P       888  888        888       Y88b  d88P Y88b  d88P
+          888  888    "Y8888P"        888  888        888        "Y8888P"   "Y8888P"
+    */
+
+    private $purePerms, $factionsPro;
     
     public function onLoad()
     {
         $this->saveDefaultConfig();
         
-        if($this->getConfig()->getNested("enable-multiworld-support")) $this->getLogger()->notice("Successfully enabled PureChat multiworld support");
+        if($this->getConfig()->getNested("enable-multiworld-support"))
+            $this->getLogger()->notice("Successfully enabled PureChat multiworld support");
     }
     
     public function onEnable()
     {
-        $this->PurePerms = $this->getServer()->getPluginManager()->getPlugin("PurePerms");
+        $this->purePerms = $this->getServer()->getPluginManager()->getPlugin("PurePerms");
         $this->factionsPro = $this->getServer()->getPluginManager()->getPlugin("FactionsPro");
         
         $this->getServer()->getPluginManager()->registerEvents(new ChatListener($this), $this);
     }
 
     /**
-     * @param $chatFormat
-     * @return mixed
+     * @param $string
+     * @return string
      */
-    public function addColors($chatFormat)
+    public function addColors($string)
     {
-        $chatFormat = str_replace("{COLOR_BLACK}", TextFormat::BLACK, $chatFormat);
-        $chatFormat = str_replace("{COLOR_DARK_BLUE}", TextFormat::DARK_BLUE, $chatFormat);
-        $chatFormat = str_replace("{COLOR_DARK_GREEN}", TextFormat::DARK_GREEN, $chatFormat);
-        $chatFormat = str_replace("{COLOR_DARK_AQUA}", TextFormat::DARK_AQUA, $chatFormat);
-        $chatFormat = str_replace("{COLOR_DARK_RED}", TextFormat::DARK_RED, $chatFormat);
-        $chatFormat = str_replace("{COLOR_DARK_PURPLE}", TextFormat::DARK_PURPLE, $chatFormat);
-        $chatFormat = str_replace("{COLOR_GOLD}", TextFormat::GOLD, $chatFormat);
-        $chatFormat = str_replace("{COLOR_GRAY}", TextFormat::GRAY, $chatFormat);
-        $chatFormat = str_replace("{COLOR_DARK_GRAY}", TextFormat::DARK_GRAY, $chatFormat);
-        $chatFormat = str_replace("{COLOR_BLUE}", TextFormat::BLUE, $chatFormat);
-        $chatFormat = str_replace("{COLOR_GREEN}", TextFormat::GREEN, $chatFormat);
-        $chatFormat = str_replace("{COLOR_AQUA}", TextFormat::AQUA, $chatFormat);
-        $chatFormat = str_replace("{COLOR_RED}", TextFormat::RED, $chatFormat);
-        $chatFormat = str_replace("{COLOR_LIGHT_PURPLE}", TextFormat::LIGHT_PURPLE, $chatFormat);
-        $chatFormat = str_replace("{COLOR_YELLOW}", TextFormat::YELLOW, $chatFormat);
-        $chatFormat = str_replace("{COLOR_WHITE}", TextFormat::WHITE, $chatFormat);
+        $string = str_replace("{COLOR_BLACK}", TextFormat::BLACK, $string);
+        $string = str_replace("{COLOR_DARK_BLUE}", TextFormat::DARK_BLUE, $string);
+        $string = str_replace("{COLOR_DARK_GREEN}", TextFormat::DARK_GREEN, $string);
+        $string = str_replace("{COLOR_DARK_AQUA}", TextFormat::DARK_AQUA, $string);
+        $string = str_replace("{COLOR_DARK_RED}", TextFormat::DARK_RED, $string);
+        $string = str_replace("{COLOR_DARK_PURPLE}", TextFormat::DARK_PURPLE, $string);
+        $string = str_replace("{COLOR_GOLD}", TextFormat::GOLD, $string);
+        $string = str_replace("{COLOR_GRAY}", TextFormat::GRAY, $string);
+        $string = str_replace("{COLOR_DARK_GRAY}", TextFormat::DARK_GRAY, $string);
+        $string = str_replace("{COLOR_BLUE}", TextFormat::BLUE, $string);
+        $string = str_replace("{COLOR_GREEN}", TextFormat::GREEN, $string);
+        $string = str_replace("{COLOR_AQUA}", TextFormat::AQUA, $string);
+        $string = str_replace("{COLOR_RED}", TextFormat::RED, $string);
+        $string = str_replace("{COLOR_LIGHT_PURPLE}", TextFormat::LIGHT_PURPLE, $string);
+        $string = str_replace("{COLOR_YELLOW}", TextFormat::YELLOW, $string);
+        $string = str_replace("{COLOR_WHITE}", TextFormat::WHITE, $string);
 
-        $chatFormat = str_replace("{FORMAT_OBFUSCATED}", TextFormat::OBFUSCATED, $chatFormat);
-        $chatFormat = str_replace("{FORMAT_BOLD}", TextFormat::BOLD, $chatFormat);
-        $chatFormat = str_replace("{FORMAT_STRIKETHROUGH}", TextFormat::STRIKETHROUGH, $chatFormat);
-        $chatFormat = str_replace("{FORMAT_UNDERLINE}", TextFormat::UNDERLINE, $chatFormat);
-        $chatFormat = str_replace("{FORMAT_ITALIC}", TextFormat::ITALIC, $chatFormat);
+        $string = str_replace("{FORMAT_OBFUSCATED}", TextFormat::OBFUSCATED, $string);
+        $string = str_replace("{FORMAT_BOLD}", TextFormat::BOLD, $string);
+        $string = str_replace("{FORMAT_STRIKETHROUGH}", TextFormat::STRIKETHROUGH, $string);
+        $string = str_replace("{FORMAT_UNDERLINE}", TextFormat::UNDERLINE, $string);
+        $string = str_replace("{FORMAT_ITALIC}", TextFormat::ITALIC, $string);
+        $string = str_replace("{FORMAT_RESET}", TextFormat::RESET, $string);
 
-        $chatFormat = str_replace("{FORMAT_RESET}", TextFormat::RESET, $chatFormat);
-
-        return $chatFormat;
+        return $string;
     }
 
     /**
      * @param Player $player
      * @param $message
      * @param null $levelName
-     * @return mixed
+     * @return string
      */
-    public function formatMessage(Player $player, $message, $levelName = null)
+    public function getCustomChatFormat(Player $player, $message, $levelName = null)
     {
-        $group = $this->PurePerms->getUserDataMgr()->getGroup($player, $levelName);
-        
+        $group = $this->purePerms->getUserDataMgr()->getGroup($player, $levelName);
+
         $groupName = $group->getName();
-        
-        if($levelName == null)
+
+        if($levelName === null)
         {
-            if($this->getConfig()->getNested("groups.$groupName.default-chat") == null)
+            if($this->getConfig()->getNested("groups.$groupName.default-chat") === null)
             {
                 $this->getConfig()->setNested("groups.$groupName.default-chat", "[$groupName] {display_name} > {message}");
 
@@ -98,29 +99,19 @@ class PureChat extends PluginBase
         }
         else
         {
-            if($this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-chat") == null)
+            if($this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-chat") === null)
             {
                 $this->getConfig()->setNested("groups.$groupName.worlds.$levelName.default-chat", "[$groupName] {display_name} > {message}");
-                
+
                 $this->saveConfig();
             }
 
             $chatFormat = $this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-chat");
         }
 
-        $chatFormat = str_replace("{world_name}", $levelName, $chatFormat);
-        $chatFormat = str_replace("{display_name}", $player->getDisplayName(), $chatFormat);
-        $chatFormat = str_replace("{user_name}", $player->getName(), $chatFormat);
-
-        $message = $this->addColors($message);
-
-        if(!$player->hasPermission("pchat.colored.chat")) $message = $this->removeColors($message);
-
-        $chatFormat = str_replace("{message}", $message, $chatFormat);
-        
-        if($this->factionsPro != null) 
+        if($this->factionsPro !== null)
         {
-            if($this->getConfig()->getNested("custom-no-fac-message") == null)
+            if($this->getConfig()->getNested("custom-no-fac-message") === null)
             {
                 $this->getConfig()->setNested("custom-no-fac-message", "...");
 
@@ -146,48 +137,53 @@ class PureChat extends PluginBase
             }
         }
 
+        $chatFormat = str_replace("{world_name}", $levelName, $chatFormat);
+        $chatFormat = str_replace("{display_name}", $player->getDisplayName(), $chatFormat);
+        $chatFormat = str_replace("{user_name}", $player->getName(), $chatFormat);
+
+        $chatFormat = $this->addColors($chatFormat);
+
+        if(!$player->hasPermission("pchat.colored.format")) $chatFormat = $this->removeColors($chatFormat);
+
+        $message = $this->addColors($message);
+
+        if(!$player->hasPermission("pchat.colored.chat")) $message = $this->removeColors($message);
+
+        $chatFormat = str_replace("{message}", $message, $chatFormat);
+
         return $chatFormat;
     }
 
-    /**
-     * @param Player $player
-     * @param $levelName
-     * @return mixed
-     */
     public function getNameTag(Player $player, $levelName)
     {
-        $group = $this->PurePerms->getUserDataMgr()->getGroup($player, $levelName);
-        
+        $group = $this->purePerms->getUserDataMgr()->getGroup($player, $levelName);
+
         $groupName = $group->getName();
-        
-        if($levelName == null)
+
+        if($levelName === null)
         {
-            if($this->getConfig()->getNested("groups.$groupName.default-nametag") == null)
+            if($this->getConfig()->getNested("groups.$groupName.default-nametag") === null)
             {
                 $this->getConfig()->setNested("groups.$groupName.default-nametag", "[$groupName] {display_name}");
             }
-            
+
             $nameTag = $this->getConfig()->getNested("groups.$groupName.default-nametag");
         }
         else
         {
-            if($this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-nametag") == null)
+            if($this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-nametag") === null)
             {
                 $this->getConfig()->setNested("groups.$groupName.worlds.$levelName.default-nametag", "[$groupName] {display_name}");
-                
+
                 $this->getConfig()->save();
             }
-            
+
             $nameTag = $this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-nametag");
         }
-        
-        $nameTag = str_replace("{world_name}", $levelName, $nameTag);
-        $nameTag = str_replace("{display_name}", $player->getDisplayName(), $nameTag);
-        $nameTag = str_replace("{user_name}", $player->getName(), $nameTag);
-        
-        if($this->factionsPro != null) 
+
+        if($this->factionsPro !== null)
         {
-            if($this->getConfig()->getNested("custom-no-fac-message") == null)
+            if($this->getConfig()->getNested("custom-no-fac-message") === null)
             {
                 $this->getConfig()->setNested("custom-no-fac-message", "...");
 
@@ -195,7 +191,7 @@ class PureChat extends PluginBase
             }
 
             if(!$this->factionsPro->getSession($player)->inFaction())
-            {            
+            {
                 $nameTag = str_replace("{faction}", $this->getConfig()->getNested("custom-no-fac-message"), $nameTag);
             }
 
@@ -213,40 +209,47 @@ class PureChat extends PluginBase
             }
         }
 
+        $nameTag = str_replace("{world_name}", $levelName, $nameTag);
+        $nameTag = str_replace("{display_name}", $player->getDisplayName(), $nameTag);
+        $nameTag = str_replace("{user_name}", $player->getName(), $nameTag);
+
+        $nameTag = $this->addColors($nameTag);
+
+        if(!$player->hasPermission("pchat.colored.nametag")) $nameTag = $this->removeColors($nameTag);
+
         return $nameTag;
     }
 
     /**
-     * @param $chatFormat
-     * @return mixed
+     * @param $string
+     * @return string
      */
-    public function removeColors($chatFormat)
+    public function removeColors($string)
     {
-        $chatFormat = str_replace(TextFormat::BLACK, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::DARK_BLUE, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::DARK_GREEN, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::DARK_AQUA, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::DARK_RED, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::DARK_PURPLE, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::GOLD, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::GRAY, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::DARK_GRAY, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::BLUE, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::GREEN, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::AQUA, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::RED, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::LIGHT_PURPLE, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::YELLOW, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::WHITE, "", $chatFormat);
+        $string = str_replace(TextFormat::BLACK, '', $string);
+        $string = str_replace(TextFormat::DARK_BLUE, '', $string);
+        $string = str_replace(TextFormat::DARK_GREEN, '', $string);
+        $string = str_replace(TextFormat::DARK_AQUA, '', $string);
+        $string = str_replace(TextFormat::DARK_RED, '', $string);
+        $string = str_replace(TextFormat::DARK_PURPLE, '', $string);
+        $string = str_replace(TextFormat::GOLD, '', $string);
+        $string = str_replace(TextFormat::GRAY, '', $string);
+        $string = str_replace(TextFormat::DARK_GRAY, '', $string);
+        $string = str_replace(TextFormat::BLUE, '', $string);
+        $string = str_replace(TextFormat::GREEN, '', $string);
+        $string = str_replace(TextFormat::AQUA, '', $string);
+        $string = str_replace(TextFormat::RED, '', $string);
+        $string = str_replace(TextFormat::LIGHT_PURPLE, '', $string);
+        $string = str_replace(TextFormat::YELLOW, '', $string);
+        $string = str_replace(TextFormat::WHITE, '', $string);
 
-        $chatFormat = str_replace(TextFormat::OBFUSCATED, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::BOLD, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::STRIKETHROUGH, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::UNDERLINE, "", $chatFormat);
-        $chatFormat = str_replace(TextFormat::ITALIC, "", $chatFormat);
+        $string = str_replace(TextFormat::OBFUSCATED, '', $string);
+        $string = str_replace(TextFormat::BOLD, '', $string);
+        $string = str_replace(TextFormat::STRIKETHROUGH, '', $string);
+        $string = str_replace(TextFormat::UNDERLINE, '', $string);
+        $string = str_replace(TextFormat::ITALIC, '', $string);
+        $string = str_replace(TextFormat::RESET, '', $string);
 
-        $chatFormat = str_replace(TextFormat::RESET, "", $chatFormat);
-
-        return $chatFormat;
+        return $string;
     }
 }
