@@ -49,7 +49,7 @@ class ChatListener implements Listener
             $levelName = $isMultiWorldSupportEnabled ? $player->getLevel()->getName() : null;
 
             $nameTag = $this->plugin->getNameTag($player, $levelName);
-            
+
             $player->setNameTag($nameTag);
         }
     }
