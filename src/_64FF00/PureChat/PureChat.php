@@ -190,13 +190,8 @@ class PureChat extends PluginBase
                 $this->saveConfig();
             }
 
-<<<<<<< HEAD
-            if(!$this->factionsPro->getSession($player)->inFaction())
-            {
-=======
             if(!$this->factionsPro->isInFaction($player->getName()))
-            {            
->>>>>>> parent of 0e00286... Update for FactionsPro v1.5b1
+            {
                 $nameTag = str_replace("{faction}", $this->getConfig()->getNested("custom-no-fac-message"), $nameTag);
             }
 
