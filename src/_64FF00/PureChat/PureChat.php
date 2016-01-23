@@ -39,7 +39,14 @@ class PureChat extends PluginBase
         $this->purePerms = $this->getServer()->getPluginManager()->getPlugin("PurePerms");
         $this->factionsPro = $this->getServer()->getPluginManager()->getPlugin("FactionsPro");
 
-        $this->getConfig()->setNested("enable-multiworld-support", $this->purePerms->getConfigValue("enable-multiworld-perms") ? true : false);
+        if($this->purePerms->getConfigValue("enable-multiworld-perms") and !$this->getConfig()->getNested("enable-multiworld-support"))
+        {
+            $this->getConfig()->setNested("enable-multiworld-support", true);
+        }
+        else
+        {
+            $this->getConfig()->setNested("enable-multiworld-support", false);
+        }
 
         if($this->getConfig()->getNested("enable-multiworld-support"))
             $this->getLogger()->notice("Multiworld support enabled.");
