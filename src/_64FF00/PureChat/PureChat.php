@@ -39,16 +39,16 @@ class PureChat extends PluginBase
         $this->purePerms = $this->getServer()->getPluginManager()->getPlugin("PurePerms");
         $this->factionsPro = $this->getServer()->getPluginManager()->getPlugin("FactionsPro");
 
-        if($this->purePerms->getConfigValue("enable-multiworld-perms") and !$this->getConfig()->getNested("enable-multiworld-support"))
+        if($this->purePerms->getConfigValue("enable-multiworld-perms"))
         {
-            $this->getConfig()->setNested("enable-multiworld-support", true);
+            $this->getConfig()->set("enable-multiworld-support", true);
         }
         else
         {
-            $this->getConfig()->setNested("enable-multiworld-support", false);
+            $this->getConfig()->set("enable-multiworld-support", false);
         }
 
-        if($this->getConfig()->getNested("enable-multiworld-support"))
+        if($this->getConfig()->get("enable-multiworld-support"))
             $this->getLogger()->notice("Multiworld support enabled.");
         
         $this->getServer()->getPluginManager()->registerEvents(new ChatListener($this), $this);
@@ -119,22 +119,22 @@ class PureChat extends PluginBase
                 $this->saveConfig();
             }
 
-            if(!$this->factionsPro->getSession($player)->inFaction())
+            if(!$this->factionsPro->isInFaction($player->getName())/*!$this->factionsPro->getSession($player)->inFaction()*/)
             {
                 $chatFormat = str_replace("{faction}", $this->getConfig()->getNested("custom-no-fac-message"), $chatFormat);
             }
 
-            if($this->factionsPro->getSession($player)->isLeader())
+            if($this->factionsPro->isLeader($player->getName())/*$this->factionsPro->getSession($player)->isLeader()*/)
             {
-                $chatFormat = str_replace("{faction}", "**" . $this->factionsPro->getSession($player)->getFactionName(), $chatFormat);
+                $chatFormat = str_replace("{faction}", "**" . $this->factionsPro->getPlayerFaction($player->getName()) /*$this->factionsPro->getSession($player)->getFactionName()*/, $chatFormat);
             }
-            elseif($this->factionsPro->getSession($player)->isOfficer())
+            elseif($this->factionsPro->isOfficer($player->getName())/*$this->factionsPro->getSession($player)->isOfficer()*/)
             {
-                $chatFormat = str_replace("{faction}", "*" . $this->factionsPro->getSession($player)->getFactionName(), $chatFormat);
+                $chatFormat = str_replace("{faction}", "*" . $this->factionsPro->getPlayerFaction($player->getName()) /*$this->factionsPro->getSession($player)->getFactionName()*/, $chatFormat);
             }
             else
             {
-                $chatFormat = str_replace("{faction}", "" . $this->factionsPro->getSession($player)->getFactionName(), $chatFormat);
+                $chatFormat = str_replace("{faction}", "" . $this->factionsPro->getPlayerFaction($player->getName()) /*$this->factionsPro->getSession($player)->getFactionName()*/, $chatFormat);
             }
         }
         else
@@ -190,22 +190,22 @@ class PureChat extends PluginBase
                 $this->saveConfig();
             }
 
-            if(!$this->factionsPro->getSession($player)->inFaction())
+            if(!$this->factionsPro->isInFaction($player->getName())/*!$this->factionsPro->getSession($player)->inFaction()*/)
             {
                 $nameTag = str_replace("{faction}", $this->getConfig()->getNested("custom-no-fac-message"), $nameTag);
             }
 
-            if($this->factionsPro->getSession($player)->isLeader())
+            if($this->factionsPro->isLeader($player->getName())/*$this->factionsPro->getSession($player)->isLeader()*/)
             {
-                $nameTag = str_replace("{faction}", "**" . $this->factionsPro->getSession($player)->getFactionName(), $nameTag);
+                $nameTag = str_replace("{faction}", "**" . $this->factionsPro->getPlayerFaction($player->getName()) /*$this->factionsPro->getSession($player)->getFactionName()*/, $nameTag);
             }
-            elseif($this->factionsPro->getSession($player)->isOfficer())
+            elseif($this->factionsPro->isOfficer($player->getName())/*$this->factionsPro->getSession($player)->isOfficer()*/)
             {
-                $nameTag = str_replace("{faction}", "*" . $this->factionsPro->getSession($player)->getFactionName(), $nameTag);
+                $nameTag = str_replace("{faction}", "*" . $this->factionsPro->getPlayerFaction($player->getName()) /*$this->factionsPro->getSession($player)->getFactionName()*/, $nameTag);
             }
             else
             {
-                $nameTag = str_replace("{faction}", "" . $this->factionsPro->getSession($player)->getFactionName(), $nameTag);
+                $nameTag = str_replace("{faction}", "" . $this->factionsPro->getPlayerFaction($player->getName()) /*$this->factionsPro->getSession($player)->getFactionName()*/, $nameTag);
             }
         }
         else
