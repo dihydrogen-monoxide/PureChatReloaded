@@ -245,6 +245,7 @@ class PureChat extends PluginBase
         if($this->factionsAPI !== null)
         {
             $string = str_replace("{FACTION_NAME}", $this->factionsAPI->getPlayerFaction($player), $string);
+            $string = str_replace("{FACTION_RANK}", $this->factionsAPI->getPlayerRank($player), $string);
         }
 
         $string = str_replace("{WORLD_NAME}", ($levelName === null ? "" : $levelName), $string);
@@ -399,6 +400,60 @@ class PureChat extends PluginBase
 
             return $worldData["suffix"];
         }
+    }
+
+    /**
+     * @param Player $player
+     * @param $chatFormat
+     * @param null $levelName
+     * @return bool
+     */
+    public function setOriginalChatFormat(Player $player, $chatFormat, $levelName = null)
+    {
+        /** @var \_64FF00\PurePerms\PPGroup $group */
+        $group = $this->purePerms->getUserDataMgr()->getGroup($player, $levelName);
+
+        if($levelName === null)
+        {
+            $this->getConfig()->setNested("groups." . $group->getName() . ".chat", $chatFormat);
+
+            $this->saveConfig();
+        }
+        else
+        {
+            $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.chat", $chatFormat);
+
+            $this->saveConfig();
+        }
+
+        return true;
+    }
+
+    /**
+     * @param Player $player
+     * @param $nameTag
+     * @param null $levelName
+     * @return bool
+     */
+    public function setOriginalNametag(Player $player, $nameTag, $levelName = null)
+    {
+        /** @var \_64FF00\PurePerms\PPGroup $group */
+        $group = $this->purePerms->getUserDataMgr()->getGroup($player, $levelName);
+
+        if($levelName === null)
+        {
+            $this->getConfig()->setNested("groups." . $group->getName() . ".nametag", $nameTag);
+
+            $this->saveConfig();
+        }
+        else
+        {
+            $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.nametag", $nameTag);
+
+            $this->saveConfig();
+        }
+
+        return true;
     }
 
     /**

@@ -17,7 +17,7 @@ enable-multiworld-chat: false
 # &a: Green, &b: Aqua, &c: Red, &d: Light Purple, &e: Yellow, &f: White
 # &k: Obfuscated, &l: Bold, &m: Strikethrough, &n: Underline, &o: Italic, &r: Reset
 
-# Available PureChat tags: {DISPLAY_NAME}, {MESSAGE}, {FACTION_NAME}, {PREFIX}, {SUFFIX}, {WORLD_NAME}
+# Available PureChat tags: {DISPLAY_NAME}, {MESSAGE}, {FACTION_NAME}, {FACTION_RANK}, {PREFIX}, {SUFFIX}, {WORLD_NAME}
 groups:
   Guest:
     chat: "&3&l{PREFIX}&e[Guest]&r {DISPLAY_NAME} &7> {MESSAGE}"
