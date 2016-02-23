@@ -2,10 +2,13 @@
 
 namespace _64FF00\PureChat;
 
+use _64FF00\PureChat\factions\FactionsInterface;
+use _64FF00\PureChat\factions\FactionsPro;
+use _64FF00\PureChat\factions\XeviousPE_Factions;
+
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 
-use pocketmine\level\Level;
 use pocketmine\Player;
 
 use pocketmine\plugin\PluginBase;
@@ -15,7 +18,7 @@ use pocketmine\utils\TextFormat;
 class PureChat extends PluginBase
 {
     /*
-        PurePerms by 64FF00 (Twitter: @64FF00)
+        PureChat by 64FF00 (Twitter: @64FF00)
 
           888  888    .d8888b.      d8888  8888888888 8888888888 .d8888b.   .d8888b.
           888  888   d88P  Y88b    d8P888  888        888       d88P  Y88b d88P  Y88b
@@ -27,64 +30,227 @@ class PureChat extends PluginBase
           888  888    "Y8888P"        888  888        888        "Y8888P"   "Y8888P"
     */
 
-    private $purePerms, $factionsPro;
-    
+    const MAIN_PREFIX = "\x5b\x50\x75\x72\x65\x43\x68\x61\x74\x3a\x36\x34\x46\x46\x30\x30\x5d";
+
+    /** @var FactionsInterface $factionsAPI */
+    private $factionsAPI;
+
+    /** @var \_64FF00\PurePerms\PurePerms $purePerms */
+    private $purePerms;
+
     public function onLoad()
     {
         $this->saveDefaultConfig();
+
+        $this->purePerms = $this->getServer()->getPluginManager()->getPlugin("PurePerms");
     }
     
     public function onEnable()
     {
-        $this->purePerms = $this->getServer()->getPluginManager()->getPlugin("PurePerms");
-        $this->factionsPro = $this->getServer()->getPluginManager()->getPlugin("FactionsPro");
+        $this->loadFactionsPlugin();
 
-        if($this->purePerms->getConfigValue("enable-multiworld-perms"))
+        $this->getServer()->getPluginManager()->registerEvents(new PCListener($this), $this);
+    }
+
+    /**
+     * @param CommandSender $sender
+     * @param Command $cmd
+     * @param string $label
+     * @param array $args
+     */
+    public function onCommand(CommandSender $sender, Command $cmd, $label, array $args)
+    {
+        switch(strtolower($cmd->getName()))
         {
-            $this->getConfig()->set("enable-multiworld-support", true);
+            case "setprefix":
+
+                if(!$sender instanceof Player)
+                {
+                    $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " This command can be only used in-game.");
+
+                    return true;
+                }
+
+                if(!isset($args[0]))
+                {
+                    $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " Usage: /setprefix <prefix>");
+
+                    return true;
+                }
+
+                $levelName = $this->getConfig()->get("enable-multiworld-chat") ? $sender->getLevel()->getName() : null;
+
+                $prefix = str_replace("{BLANK}", ' ', implode('', $args));
+
+                $this->setPrefix($prefix, $sender, $levelName);
+
+                $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " You set your prefix to " . $prefix . ".");
+
+                break;
+
+            case "setsuffix":
+
+                if(!$sender instanceof Player)
+                {
+                    $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " This command can be only used in-game.");
+
+                    return true;
+                }
+
+                if(!isset($args[0]))
+                {
+                    $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " Usage: /setsuffix <suffix>");
+
+                    return true;
+                }
+
+                $levelName = $this->getConfig()->get("enable-multiworld-chat") ? $sender->getLevel()->getName() : null;
+
+                $suffix = str_replace("{BLANK}", ' ', implode('', $args));
+
+                $this->setSuffix($suffix, $sender, $levelName);
+
+                $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " You set your suffix to " . $suffix . ".");
+
+                break;
+        }
+
+        return true;
+    }
+
+    private function loadFactionsPlugin()
+    {
+        $factionsPluginName = $this->getConfig()->get("default-factions-plugin");
+
+        if($factionsPluginName === null)
+        {
+            $this->getLogger()->notice("No valid factions plugin in default-factions-plugin node was found. Disabling factions plugin support.");
         }
         else
         {
-            $this->getConfig()->set("enable-multiworld-support", false);
+            switch(strtolower($factionsPluginName))
+            {
+                case "factionspro":
+
+                    if($this->getServer()->getPluginManager()->getPlugin("FactionsPro") !== null)
+                    {
+                        /** @var FactionsPro\FactionsMain $plugin */
+                        $plugin = $this->getServer()->getPluginManager()->getPlugin("FactionsPro");
+
+                        $this->factionsAPI = new FactionsPro($plugin);
+
+                        $this->getLogger()->notice("FactionsPro support enabled.");
+
+                        break;
+                    }
+
+                    $this->getLogger()->notice("No valid factions plugin in default-factions-plugin node was found. Disabling factions plugin support.");
+
+                    break;
+
+                case "xeviouspe-factions":
+
+                    if($this->getServer()->getPluginManager()->getPlugin("XeviousPE-Factions") !== null)
+                    {
+                        /** @var _64FF00\XeviousPE_Factions\Tribble $plugin */
+                        $plugin = $this->getServer()->getPluginManager()->getPlugin("XeviousPE-Factions");
+
+                        $this->factionsAPI = new XeviousPE_Factions($plugin);
+
+                        $this->getLogger()->notice("XeviousPE-Factions support enabled.");
+
+                        break;
+                    }
+
+                    $this->getLogger()->notice("No valid factions plugin in default-factions-plugin node was found. Disabling factions plugin support.");
+
+                    break;
+
+                default:
+
+                    $this->getLogger()->notice("No valid factions plugin in default-factions-plugin node was found. Disabling factions plugin support.");
+
+                    break;
+            }
         }
+    }
 
-        if($this->getConfig()->get("enable-multiworld-support"))
-            $this->getLogger()->notice("Multiworld support enabled.");
-        
-        $this->getServer()->getPluginManager()->registerEvents(new ChatListener($this), $this);
+    /*
+          888  888          d8888 8888888b. 8888888
+          888  888         d88888 888   Y88b  888
+        888888888888      d88P888 888    888  888
+          888  888       d88P 888 888   d88P  888
+          888  888      d88P  888 8888888P"   888
+        888888888888   d88P   888 888         888
+          888  888    d8888888888 888         888
+          888  888   d88P     888 888       8888888
+    */
 
-        $this->sortPChatData();
+    /**
+     * @param $string
+     * @return mixed
+     */
+    public function applyColors($string)
+    {
+        $string = str_replace("&0", TextFormat::BLACK, $string);
+        $string = str_replace("&1", TextFormat::DARK_BLUE, $string);
+        $string = str_replace("&2", TextFormat::DARK_GREEN, $string);
+        $string = str_replace("&3", TextFormat::DARK_AQUA, $string);
+        $string = str_replace("&4", TextFormat::DARK_RED, $string);
+        $string = str_replace("&5", TextFormat::DARK_PURPLE, $string);
+        $string = str_replace("&6", TextFormat::GOLD, $string);
+        $string = str_replace("&7", TextFormat::GRAY, $string);
+        $string = str_replace("&8", TextFormat::DARK_GRAY, $string);
+        $string = str_replace("&9", TextFormat::BLUE, $string);
+        $string = str_replace("&a", TextFormat::GREEN, $string);
+        $string = str_replace("&b", TextFormat::AQUA, $string);
+        $string = str_replace("&c", TextFormat::RED, $string);
+        $string = str_replace("&d", TextFormat::LIGHT_PURPLE, $string);
+        $string = str_replace("&e", TextFormat::YELLOW, $string);
+        $string = str_replace("&f", TextFormat::WHITE, $string);
+        $string = str_replace("&k", TextFormat::OBFUSCATED, $string);
+        $string = str_replace("&l", TextFormat::BOLD, $string);
+        $string = str_replace("&m", TextFormat::STRIKETHROUGH, $string);
+        $string = str_replace("&n", TextFormat::UNDERLINE, $string);
+        $string = str_replace("&o", TextFormat::ITALIC, $string);
+        $string = str_replace("&r", TextFormat::RESET, $string);
+
+        return $string;
     }
 
     /**
      * @param $string
-     * @return string
+     * @param Player $player
+     * @param $message
+     * @param null $levelName
+     * @return mixed
      */
-    public function addColors($string)
+    public function applyPCTags($string, Player $player, $message, $levelName)
     {
-        $string = str_replace("{COLOR_BLACK}", TextFormat::BLACK, $string);
-        $string = str_replace("{COLOR_DARK_BLUE}", TextFormat::DARK_BLUE, $string);
-        $string = str_replace("{COLOR_DARK_GREEN}", TextFormat::DARK_GREEN, $string);
-        $string = str_replace("{COLOR_DARK_AQUA}", TextFormat::DARK_AQUA, $string);
-        $string = str_replace("{COLOR_DARK_RED}", TextFormat::DARK_RED, $string);
-        $string = str_replace("{COLOR_DARK_PURPLE}", TextFormat::DARK_PURPLE, $string);
-        $string = str_replace("{COLOR_GOLD}", TextFormat::GOLD, $string);
-        $string = str_replace("{COLOR_GRAY}", TextFormat::GRAY, $string);
-        $string = str_replace("{COLOR_DARK_GRAY}", TextFormat::DARK_GRAY, $string);
-        $string = str_replace("{COLOR_BLUE}", TextFormat::BLUE, $string);
-        $string = str_replace("{COLOR_GREEN}", TextFormat::GREEN, $string);
-        $string = str_replace("{COLOR_AQUA}", TextFormat::AQUA, $string);
-        $string = str_replace("{COLOR_RED}", TextFormat::RED, $string);
-        $string = str_replace("{COLOR_LIGHT_PURPLE}", TextFormat::LIGHT_PURPLE, $string);
-        $string = str_replace("{COLOR_YELLOW}", TextFormat::YELLOW, $string);
-        $string = str_replace("{COLOR_WHITE}", TextFormat::WHITE, $string);
+        // TODO
+        $string = str_replace("{DISPLAY_NAME}", $player->getDisplayName(), $string);
 
-        $string = str_replace("{FORMAT_OBFUSCATED}", TextFormat::OBFUSCATED, $string);
-        $string = str_replace("{FORMAT_BOLD}", TextFormat::BOLD, $string);
-        $string = str_replace("{FORMAT_STRIKETHROUGH}", TextFormat::STRIKETHROUGH, $string);
-        $string = str_replace("{FORMAT_UNDERLINE}", TextFormat::UNDERLINE, $string);
-        $string = str_replace("{FORMAT_ITALIC}", TextFormat::ITALIC, $string);
-        $string = str_replace("{FORMAT_RESET}", TextFormat::RESET, $string);
+        if($message === null)
+            $message = '';
+
+        if($player->hasPermission("pchat.coloredMessages"))
+        {
+            $string = str_replace("{MESSAGE}", $message, $string);
+        }
+        else
+        {
+            $string = str_replace("{MESSAGE}", $this->stripColors($message), $string);
+        }
+
+        if($this->factionsAPI !== null)
+        {
+            $string = str_replace("{FACTION_NAME}", $this->factionsAPI->getPlayerFaction($player), $string);
+        }
+
+        $string = str_replace("{WORLD_NAME}", ($levelName === null ? "" : $levelName), $string);
+
+        $string = str_replace("{PREFIX}", $this->getPrefix($player, $levelName), $string);
+        $string = str_replace("{SUFFIX}", $this->getSuffix($player, $levelName), $string);
 
         return $string;
     }
@@ -93,142 +259,201 @@ class PureChat extends PluginBase
      * @param Player $player
      * @param $message
      * @param null $levelName
-     * @return string
+     * @return mixed
      */
-    public function getCustomChatFormat(Player $player, $message, $levelName = null)
+    public function getChatFormat(Player $player, $message, $levelName = null)
     {
-        $group = $this->purePerms->getUserDataMgr()->getGroup($player, $levelName);
+        $originalChatFormat = $this->getOriginalChatFormat($player, $levelName);
 
-        $groupName = $group->getName();
-
-        if($levelName === null)
-        {
-            $chatFormat = $this->getConfig()->getNested("groups.$groupName.default-chat");
-        }
-        else
-        {
-            $chatFormat = $this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-chat");
-        }
-
-        if($this->factionsPro !== null)
-        {
-            if($this->getConfig()->getNested("custom-no-fac-message") === null)
-            {
-                $this->getConfig()->setNested("custom-no-fac-message", "...");
-
-                $this->saveConfig();
-            }
-
-            if(!$this->factionsPro->isInFaction($player->getName())/*!$this->factionsPro->getSession($player)->inFaction()*/)
-            {
-                $chatFormat = str_replace("{faction}", $this->getConfig()->getNested("custom-no-fac-message"), $chatFormat);
-            }
-
-            if($this->factionsPro->isLeader($player->getName())/*$this->factionsPro->getSession($player)->isLeader()*/)
-            {
-                $chatFormat = str_replace("{faction}", "**" . $this->factionsPro->getPlayerFaction($player->getName()) /*$this->factionsPro->getSession($player)->getFactionName()*/, $chatFormat);
-            }
-            elseif($this->factionsPro->isOfficer($player->getName())/*$this->factionsPro->getSession($player)->isOfficer()*/)
-            {
-                $chatFormat = str_replace("{faction}", "*" . $this->factionsPro->getPlayerFaction($player->getName()) /*$this->factionsPro->getSession($player)->getFactionName()*/, $chatFormat);
-            }
-            else
-            {
-                $chatFormat = str_replace("{faction}", "" . $this->factionsPro->getPlayerFaction($player->getName()) /*$this->factionsPro->getSession($player)->getFactionName()*/, $chatFormat);
-            }
-        }
-        else
-        {
-            $chatFormat = str_replace("{faction}", "", $chatFormat);
-        }
-
-        $chatFormat = str_replace("{world_name}", $levelName, $chatFormat);
-        $chatFormat = str_replace("{display_name}", $player->getDisplayName(), $chatFormat);
-        $chatFormat = str_replace("{user_name}", $player->getName(), $chatFormat);
-
-        $chatFormat = $this->addColors($chatFormat);
-
-        if(!$player->hasPermission("pchat.colored.format"))
-            $chatFormat = $this->removeColors($chatFormat);
-
-        $message = $this->addColors($message);
-
-        if(!$player->hasPermission("pchat.colored.chat"))
-            $message = $this->removeColors($message);
-
-        $chatFormat = str_replace("{message}", $message, $chatFormat);
+        $chatFormat = $this->applyColors($originalChatFormat);
+        $chatFormat = $this->applyPCTags($chatFormat, $player, $message, $levelName);
 
         return $chatFormat;
     }
 
     /**
      * @param Player $player
-     * @param $levelName
+     * @param null $levelName
      * @return mixed
      */
-    public function getNameTag(Player $player, $levelName)
+    public function getNametag(Player $player, $levelName = null)
     {
-        $group = $this->purePerms->getUserDataMgr()->getGroup($player, $levelName);
+        $originalNametag = $this->getOriginalNametag($player, $levelName);
 
-        $groupName = $group->getName();
-
-        if($levelName === null)
-        {
-            $nameTag = $this->getConfig()->getNested("groups.$groupName.default-nametag");
-        }
-        else
-        {
-            $nameTag = $this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-nametag");
-        }
-
-        if($this->factionsPro !== null)
-        {
-            if($this->getConfig()->getNested("custom-no-fac-message") === null)
-            {
-                $this->getConfig()->setNested("custom-no-fac-message", "...");
-
-                $this->saveConfig();
-            }
-
-            if(!$this->factionsPro->isInFaction($player->getName())/*!$this->factionsPro->getSession($player)->inFaction()*/)
-            {
-                $nameTag = str_replace("{faction}", $this->getConfig()->getNested("custom-no-fac-message"), $nameTag);
-            }
-
-            if($this->factionsPro->isLeader($player->getName())/*$this->factionsPro->getSession($player)->isLeader()*/)
-            {
-                $nameTag = str_replace("{faction}", "**" . $this->factionsPro->getPlayerFaction($player->getName()) /*$this->factionsPro->getSession($player)->getFactionName()*/, $nameTag);
-            }
-            elseif($this->factionsPro->isOfficer($player->getName())/*$this->factionsPro->getSession($player)->isOfficer()*/)
-            {
-                $nameTag = str_replace("{faction}", "*" . $this->factionsPro->getPlayerFaction($player->getName()) /*$this->factionsPro->getSession($player)->getFactionName()*/, $nameTag);
-            }
-            else
-            {
-                $nameTag = str_replace("{faction}", "" . $this->factionsPro->getPlayerFaction($player->getName()) /*$this->factionsPro->getSession($player)->getFactionName()*/, $nameTag);
-            }
-        }
-        else
-        {
-            $nameTag = str_replace("{faction}", "", $nameTag);
-        }
-
-        $nameTag = str_replace("{world_name}", $levelName, $nameTag);
-        $nameTag = str_replace("{display_name}", $player->getDisplayName(), $nameTag);
-        $nameTag = str_replace("{user_name}", $player->getName(), $nameTag);
-
-        $nameTag = $this->addColors($nameTag);
-
-        if(!$player->hasPermission("pchat.colored.nametag")) $nameTag = $this->removeColors($nameTag);
+        $nameTag = $this->applyColors($originalNametag);
+        $nameTag = $this->applyPCTags($nameTag, $player, null, $levelName);
 
         return $nameTag;
     }
 
     /**
-     * @param $string
-     * @return string
+     * @param Player $player
+     * @param null $levelName
+     * @return mixed
      */
-    public function removeColors($string)
+    public function getOriginalChatFormat(Player $player, $levelName = null)
+    {
+        /** @var \_64FF00\PurePerms\PPGroup $group */
+        $group = $this->purePerms->getUserDataMgr()->getGroup($player, $levelName);
+
+        if($levelName === null)
+        {
+            if($this->getConfig()->getNested("groups." . $group->getName() . ".chat") === null)
+            {
+                $this->getLogger()->critical("Invalid chat format found in config.yml (Group: " . $group->getName() . ") / Setting it to default value.");
+
+                $this->getConfig()->setNested("groups." . $group->getName() . ".chat", "&l[Guest]&r {DISPLAY_NAME} &7> {MESSAGE}");
+
+                $this->saveConfig();
+            }
+
+            return $this->getConfig()->getNested("groups." . $group->getName() . ".chat");
+        }
+        else
+        {
+            if($this->getConfig()->getNested("groups." . $group->getName() . "worlds.$levelName.chat") === null)
+            {
+                $this->getLogger()->critical("Invalid chat format found in config.yml (Group: " . $group->getName() . ", WorldName = $levelName) / Setting it to default value.");
+
+                $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.chat", "&l[Guest]&r {DISPLAY_NAME} &7> {MESSAGE}");
+
+                $this->saveConfig();
+            }
+
+            return $this->getConfig()->getNested("groups." . $group->getName() . "worlds.$levelName.chat");
+        }
+    }
+
+    public function getOriginalNametag(Player $player, $levelName = null)
+    {
+        /** @var \_64FF00\PurePerms\PPGroup $group */
+        $group = $this->purePerms->getUserDataMgr()->getGroup($player, $levelName);
+
+        if($levelName === null)
+        {
+            if($this->getConfig()->getNested("groups." . $group->getName() . ".nametag") === null)
+            {
+                $this->getLogger()->critical("Invalid nametag found in config.yml (Group: " . $group->getName() . ") / Setting it to default value.");
+
+                $this->getConfig()->setNested("groups." . $group->getName() . ".nametag", "&l[Guest]&r {DISPLAY_NAME}");
+
+                $this->saveConfig();
+            }
+
+            return $this->getConfig()->getNested("groups." . $group->getName() . ".nametag");
+        }
+        else
+        {
+            if($this->getConfig()->getNested("groups." . $group->getName() . "worlds.$levelName.nametag") === null)
+            {
+                $this->getLogger()->critical("Invalid nametag found in config.yml (Group: " . $group->getName() . ", WorldName = $levelName) / Setting it to default value.");
+
+                $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.nametag", "&l[Guest]&r {DISPLAY_NAME}");
+
+                $this->saveConfig();
+            }
+
+            return $this->getConfig()->getNested("groups." . $group->getName() . "worlds.$levelName.nametag");
+        }
+    }
+
+    /**
+     * @param Player $player
+     * @param null $levelName
+     * @return mixed|null|string
+     */
+    public function getPrefix(Player $player, $levelName = null)
+    {
+        if($levelName === null)
+        {
+            return $this->purePerms->getUserDataMgr()->getNode($player, "prefix");
+        }
+        else
+        {
+            $worldData = $this->purePerms->getUserDataMgr()->getWorldData($player, $levelName);
+
+            if(!isset($worldData["prefix"]) || $worldData["prefix"] === null)
+                return "";
+
+            return $worldData["prefix"];
+        }
+    }
+
+    /**
+     * @param Player $player
+     * @param null $levelName
+     * @return mixed|null|string
+     */
+    public function getSuffix(Player $player, $levelName = null)
+    {
+        if($levelName === null)
+        {
+            return $this->purePerms->getUserDataMgr()->getNode($player, "suffix");
+        }
+        else
+        {
+            $worldData = $this->purePerms->getUserDataMgr()->getWorldData($player, $levelName);
+
+            if(!isset($worldData["suffix"]) || $worldData["suffix"] === null)
+                return "";
+
+            return $worldData["suffix"];
+        }
+    }
+
+    /**
+     * @param $prefix
+     * @param Player $player
+     * @param null $levelName
+     * @return bool
+     */
+    public function setPrefix($prefix, Player $player, $levelName = null)
+    {
+        if($levelName === null)
+        {
+            $this->purePerms->getUserDataMgr()->setNode($player, "prefix", $prefix);
+        }
+        else
+        {
+            $worldData = $this->purePerms->getUserDataMgr()->getWorldData($player, $levelName);
+
+            $worldData["prefix"] = $prefix;
+
+            $this->purePerms->getUserDataMgr()->setWorldData($player, $levelName, $worldData);
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $suffix
+     * @param Player $player
+     * @param null $levelName
+     * @return bool
+     */
+    public function setSuffix($suffix, Player $player, $levelName = null)
+    {
+        if($levelName === null)
+        {
+            $this->purePerms->getUserDataMgr()->setNode($player, "suffix", $suffix);
+        }
+        else
+        {
+            $worldData = $this->purePerms->getUserDataMgr()->getWorldData($player, $levelName);
+
+            $worldData["suffix"] = $suffix;
+
+            $this->purePerms->getUserDataMgr()->setWorldData($player, $levelName, $worldData);
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $string
+     * @return mixed
+     */
+    public function stripColors($string)
     {
         $string = str_replace(TextFormat::BLACK, '', $string);
         $string = str_replace(TextFormat::DARK_BLUE, '', $string);
@@ -246,7 +471,6 @@ class PureChat extends PluginBase
         $string = str_replace(TextFormat::LIGHT_PURPLE, '', $string);
         $string = str_replace(TextFormat::YELLOW, '', $string);
         $string = str_replace(TextFormat::WHITE, '', $string);
-
         $string = str_replace(TextFormat::OBFUSCATED, '', $string);
         $string = str_replace(TextFormat::BOLD, '', $string);
         $string = str_replace(TextFormat::STRIKETHROUGH, '', $string);
@@ -255,48 +479,5 @@ class PureChat extends PluginBase
         $string = str_replace(TextFormat::RESET, '', $string);
 
         return $string;
-    }
-
-    public function sortPChatData()
-    {
-        foreach($this->purePerms->getGroups() as $groupName => $ppGroup)
-        {
-            if($this->getConfig()->getNested("groups.$groupName.default-chat") === null)
-            {
-                $this->getConfig()->setNested("groups.$groupName.default-chat", "[$groupName] {display_name} > {message}");
-
-                $this->saveConfig();
-            }
-
-            if($this->getConfig()->getNested("groups.$groupName.default-nametag") === null)
-            {
-                $this->getConfig()->setNested("groups.$groupName.default-nametag", "[$groupName] {display_name}");
-
-                $this->saveConfig();
-            }
-
-            if($this->getConfig()->getNested("enable-multiworld-support"))
-            {
-                /** @var Level $level */
-                foreach ($this->getServer()->getLevels() as $level)
-                {
-                    $levelName = $level->getName();
-
-                    if($this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-chat") === null)
-                    {
-                        $this->getConfig()->setNested("groups.$groupName.worlds.$levelName.default-chat", "[$groupName] {display_name} > {message}");
-
-                        $this->saveConfig();
-                    }
-
-                    if($this->getConfig()->getNested("groups.$groupName.worlds.$levelName.default-nametag") === null)
-                    {
-                        $this->getConfig()->setNested("groups.$groupName.worlds.$levelName.default-nametag", "[$groupName] {display_name}");
-
-                        $this->saveConfig();
-                    }
-                }
-            }
-        }
     }
 }

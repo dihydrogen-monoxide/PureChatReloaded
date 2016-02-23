@@ -1,31 +1,29 @@
 name: PureChat
 main: _64FF00\PureChat\PureChat
-version: "1.3.4"
+version: "1.4.0-INDEV"
 api: [1.13.0, 2.0.0]
 load: POSTWORLD
 author: 64FF00
 website: https://github.com/PurePlugins/PureChat
 depend: [PurePerms]
-softdepend: [FactionsPro]
+softdepend: [FactionsPro, XeviousPE-Factions]
 commands:
-  pcreload:
-    description: "Reloads the PureChat configuration file."
-    permission: pchat.command.pcreload
+  setprefix:
+    description: "Allows you to set your PureChat prefix"
+    permission: pchat.command.setprefix
+  setsuffix:
+    description: "Allows you to set your PureChat suffix"
+    permission: pchat.command.setsuffix	
 permissions:
   pchat:
     description: "PureChat by 64FF00! (Twitter: @64FF00)"
     children:
-      pchat.colored:
-        description: "Allows the players to get colored chat formats, nametags, and etc."
-        children:
-          pchat.colored.chat:
-            description: "Allows the players to use color codes"
-          pchat.colored.format:
-            description: "Allows the players to use colored chat formats"       
-          pchat.colored.nametag:
-            description: "Allows the players to use colored nametags"
       pchat.command:
         description: "Allows you to use all PureChat commands."
         children:
-          pchat.command.pcreload:		
-            description: "Allows you to reload PureChat configuration file."
+          pchat.command.setprefix:		
+            description: "Allows you to set your PureChat prefix"
+          pchat.command.setsuffix:		
+            description: "Allows you to set your PureChat suffix"			
+      pchat.coloredMessages:
+        description: "Allows you to use colors in chat"		

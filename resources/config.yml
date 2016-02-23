@@ -2,42 +2,37 @@
 # PureChat by 64FF00 (xktiverz@gmail.com, @64ff00 for Twitter)
 
 ---
-# Allows you to use per-world chat formats + per-world nametags
+
+# Set default factions plugin for PureChat
+# - FactionsPro / XeviousPE-Factions / null
+default-factions-plugin: ~
+
+# Enable this if you want to use per-world chat formats / per-world nametags for players
 # - true / false
-enable-multiworld-support: false
+enable-multiworld-chat: false
 
-# This message will be shown replacing th {faction} tag when a player is not in any faction
-# - STRING
-custom-no-fac-message: "..."
+# Please check if you have all PurePerms groups in your server here
 
-# A list of all PurePerms groups
+# &0: Black, &1: Dark Blue, &2: Dark Green, &3: Dark Aqua, &4: Dark Red, &5: Dark Purple, &6: Gold, &7: Gray, &8: Dark Gray, &9: Blue
+# &a: Green, &b: Aqua, &c: Red, &d: Light Purple, &e: Yellow, &f: White
+# &k: Obfuscated, &l: Bold, &m: Strikethrough, &n: Underline, &o: Italic, &r: Reset
+
+# Available PureChat tags: {DISPLAY_NAME}, {MESSAGE}, {FACTION_NAME}, {PREFIX}, {SUFFIX}, {WORLD_NAME}
 groups:
   Guest:
-    # Default tags: {world_name}, {display_name}, {user_name}, {message}
-    # Also remember that you can also use {faction} tag if you have FactionsPro plugin installed!
-    
-    # New feature added in v1.2.4 - Colors!
-    # RED: {COLOR_RED}, GREEN: {COLOR_GREEN}, BLUE: {COLOR_BLUE}, LIGHT_PURPLE: {COLOR_LIGHT_PURPLE}, and so on...
-    # BOLD: {FORMAT_BOLD}, STRIKETHROUGH: {FORMAT_STRIKETHROUGH}, UNDERLINE: {FORMAT_UNDERLINE}, ITALIC: {FORMAT_ITALIC}
-    # RESET: {FORMAT_RESET}
-    
-    # You might also need to set 'pchat.colored.format' and 'pchat.colored.nametag' to players if you want to allow them to use colored chat and nametags
-    # Use 'pchat.colored.chat' node to allow color codes for players in chat
-    default-chat: "{COLOR_YELLOW}{FORMAT_BOLD}[Guest]{COLOR_WHITE}{FORMAT_RESET} {display_name} {COLOR_GRAY}> {message}"
-    
-    # Almost all of the tags can be applied to nametag formats except {message} tag
-    default-nametag: "{COLOR_YELLOW}{FORMAT_BOLD}[Guest]{COLOR_WHITE}{FORMAT_RESET} {display_name}"
-    worlds: [] 
+    chat: "&3&l{PREFIX}&e[Guest]&r {DISPLAY_NAME} &7> {MESSAGE}"
+    nametag: "&3&l{PREFIX}&e[Guest]&r {DISPLAY_NAME}"
+    worlds: []
   Admin:
-    default-chat: "{COLOR_AQUA}{FORMAT_BOLD}[Admin]{COLOR_WHITE}{FORMAT_RESET} {display_name} {COLOR_GRAY}> {message}"
-    default-nametag: "{COLOR_AQUA}{FORMAT_BOLD}[Admin]{COLOR_WHITE}{FORMAT_RESET} {display_name}"
+    chat: "&3&l{PREFIX}&c[Admin]&r {DISPLAY_NAME} &7> {MESSAGE}"
+    nametag: "&3&l{PREFIX}&e[Admin]&r {DISPLAY_NAME}"
     worlds: []
-  Owner: 
-    default-chat: "{COLOR_BLUE}{FORMAT_BOLD}[Owner]{COLOR_WHITE}{FORMAT_RESET} {display_name} {COLOR_GRAY}> {message}"
-    default-nametag: "{COLOR_BLUE}{FORMAT_BOLD}[Owner]{COLOR_WHITE}{FORMAT_RESET} {display_name}"
+  Owner:
+    chat: "&3&l{PREFIX}&a[Owner]&r {DISPLAY_NAME} &7> {MESSAGE}"
+    nametag: "&3&l{PREFIX}&e[Owner]&r {DISPLAY_NAME}"
     worlds: []
-  OP: 
-    default-chat: "{COLOR_GREEN}{FORMAT_BOLD}[OP]{COLOR_WHITE}{FORMAT_RESET} {display_name} {COLOR_GRAY}> {message}"
-    default-nametag: "{COLOR_BLUE}{FORMAT_BOLD}[OP]{COLOR_WHITE}{FORMAT_RESET} {display_name}"
+  OP:
+    chat: "&3&l{PREFIX}&9[OP]&r {DISPLAY_NAME} &7> {MESSAGE}"
+    nametag: "&3&l{PREFIX}&e[OP]&r {DISPLAY_NAME}"
     worlds: []
 ...
