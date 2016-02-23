@@ -24,8 +24,8 @@ class PCListener implements Listener
     private $plugin;
 
     /**
-     * @param PureChat $plugin
-     */
+ * @param PureChat $plugin
+ */
     public function __construct(PureChat $plugin)
     {
         $this->plugin = $plugin;
@@ -33,6 +33,7 @@ class PCListener implements Listener
 
     /**
      * @param PlayerJoinEvent $event
+     * @priority HIGH
      */
     public function onPlayerJoin(PlayerJoinEvent $event)
     {
@@ -46,6 +47,7 @@ class PCListener implements Listener
 
     /**
      * @param PlayerChatEvent $event
+     * @priority HIGH
      */
     public function onPlayerChat(PlayerChatEvent $event)
     {

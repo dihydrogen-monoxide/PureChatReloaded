@@ -39,8 +39,12 @@ class XeviousPE_Factions implements FactionsInterface
         return $this->plugin->getProvider()->getPlayerFaction($player->getName());
     }
 
+    /**
+     * @param Player $player
+     * @return string
+     */
     public function getPlayerRank(Player $player)
     {
-
+        // TODO
     }
 }

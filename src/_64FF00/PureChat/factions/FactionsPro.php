@@ -39,8 +39,32 @@ class FactionsPro implements FactionsInterface
         return $this->plugin->getPlayerFaction($player);
     }
 
+    /**
+     * @param Player $player
+     * @return string
+     */
     public function getPlayerRank(Player $player)
     {
+        if(!$this->plugin->isInFaction($player))
+        {
+            return '';
+        }
 
+        $rank = $this->plugin->getRank($player);
+
+        switch(strtolower($rank))
+        {
+            case "member":
+
+                return '';
+
+            case "officer":
+
+                return '*';
+
+            case "leader":
+
+                return '**';
+        }
     }
 }
