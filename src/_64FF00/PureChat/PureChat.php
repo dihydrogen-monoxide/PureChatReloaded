@@ -134,10 +134,7 @@ class PureChat extends PluginBase
 
                     if($this->getServer()->getPluginManager()->getPlugin("FactionsPro") !== null)
                     {
-                        /** @var FactionsPro\FactionsMain $plugin */
-                        $plugin = $this->getServer()->getPluginManager()->getPlugin("FactionsPro");
-
-                        $this->factionsAPI = new FactionsPro($plugin);
+                        $this->factionsAPI = new FactionsPro();
 
                         $this->getLogger()->notice("FactionsPro support enabled.");
 
@@ -152,10 +149,7 @@ class PureChat extends PluginBase
 
                     if($this->getServer()->getPluginManager()->getPlugin("XeviousPE-Factions") !== null)
                     {
-                        /** @var _64FF00\XeviousPE_Factions\Tribble $plugin */
-                        $plugin = $this->getServer()->getPluginManager()->getPlugin("XeviousPE-Factions");
-
-                        $this->factionsAPI = new XeviousPE_Factions($plugin);
+                        $this->factionsAPI = new XeviousPE_Factions();
 
                         $this->getLogger()->notice("XeviousPE-Factions support enabled.");
 
@@ -246,6 +240,11 @@ class PureChat extends PluginBase
         {
             $string = str_replace("{FACTION_NAME}", $this->factionsAPI->getPlayerFaction($player), $string);
             $string = str_replace("{FACTION_RANK}", $this->factionsAPI->getPlayerRank($player), $string);
+        }
+        else
+        {
+            $string = str_replace("{FACTION_NAME}", '', $string);
+            $string = str_replace("{FACTION_RANK}", '', $string);
         }
 
         $string = str_replace("{WORLD_NAME}", ($levelName === null ? "" : $levelName), $string);

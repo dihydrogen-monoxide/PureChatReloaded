@@ -3,6 +3,7 @@
 namespace _64FF00\PureChat\factions;
 
 use pocketmine\Player;
+use pocketmine\Server;
 
 class FactionsPro implements FactionsInterface
 {
@@ -19,15 +20,12 @@ class FactionsPro implements FactionsInterface
           888  888    "Y8888P"        888  888        888        "Y8888P"   "Y8888P"
     */
 
-    private $plugin;
-
     /**
-     * FactionsPro constructor.
-     * @param \FactionsPro\FactionsMain $plugin
+     * @return null|\pocketmine\plugin\Plugin
      */
-    public function __construct(\FactionsPro\FactionsMain $plugin)
+    public function getAPI()
     {
-        $this->plugin = $plugin;
+        return Server::getInstance()->getPluginManager()->getPlugin("FactionsPro");
     }
 
     /**
@@ -36,7 +34,7 @@ class FactionsPro implements FactionsInterface
      */
     public function getPlayerFaction(Player $player)
     {
-        return $this->plugin->getPlayerFaction($player);
+        return $this->getAPI()->getPlayerFaction($player);
     }
 
     /**
@@ -45,12 +43,12 @@ class FactionsPro implements FactionsInterface
      */
     public function getPlayerRank(Player $player)
     {
-        if(!$this->plugin->isInFaction($player))
+        if(!$this->getAPI()->isInFaction($player))
         {
             return '';
         }
 
-        $rank = $this->plugin->getRank($player);
+        $rank = $this->getAPI()->getRank($player);
 
         switch(strtolower($rank))
         {
