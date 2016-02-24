@@ -3,7 +3,8 @@
 namespace _64FF00\PureChat;
 
 use _64FF00\PureChat\factions\FactionsInterface;
-use _64FF00\PureChat\factions\FactionsPro;
+use _64FF00\PureChat\factions\FactionsProNew;
+use _64FF00\PureChat\factions\FactionsProOld;
 use _64FF00\PureChat\factions\XeviousPE_Factions;
 
 use pocketmine\command\Command;
@@ -132,13 +133,26 @@ class PureChat extends PluginBase
             {
                 case "factionspro":
 
-                    if($this->getServer()->getPluginManager()->getPlugin("FactionsPro") !== null)
+                    $factionsPro = $this->getServer()->getPluginManager()->getPlugin("FactionsPro");
+
+                    if($factionsPro !== null)
                     {
-                        $this->factionsAPI = new FactionsPro();
+                        if(version_compare($factionsPro->getDescription()->getVersion(), "1.5b1") === -1)
+                        {
+                            $this->factionsAPI = new FactionsProOld();
 
-                        $this->getLogger()->notice("FactionsPro support enabled.");
+                            $this->getLogger()->notice("FactionsPro-OLD support enabled.");
 
-                        break;
+                            break;
+                        }
+                        else
+                        {
+                            $this->factionsAPI = new FactionsProNew();
+
+                            $this->getLogger()->notice("FactionsPro-NEW support enabled.");
+
+                            break;
+                        }
                     }
 
                     $this->getLogger()->notice("No valid factions plugin in default-factions-plugin node was found. Disabling factions plugin support.");
@@ -302,7 +316,7 @@ class PureChat extends PluginBase
             {
                 $this->getLogger()->critical("Invalid chat format found in config.yml (Group: " . $group->getName() . ") / Setting it to default value.");
 
-                $this->getConfig()->setNested("groups." . $group->getName() . ".chat", "&l[Guest]&r {DISPLAY_NAME} &7> {MESSAGE}");
+                $this->getConfig()->setNested("groups." . $group->getName() . ".chat", "&8&l[" . $group->getName() . "]&f&r {DISPLAY_NAME} &7> {MESSAGE}");
 
                 $this->saveConfig();
             }
@@ -315,7 +329,7 @@ class PureChat extends PluginBase
             {
                 $this->getLogger()->critical("Invalid chat format found in config.yml (Group: " . $group->getName() . ", WorldName = $levelName) / Setting it to default value.");
 
-                $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.chat", "&l[Guest]&r {DISPLAY_NAME} &7> {MESSAGE}");
+                $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.chat", "&8&l[" . $group->getName() . "]&f&r {DISPLAY_NAME} &7> {MESSAGE}");
 
                 $this->saveConfig();
             }
@@ -335,7 +349,7 @@ class PureChat extends PluginBase
             {
                 $this->getLogger()->critical("Invalid nametag found in config.yml (Group: " . $group->getName() . ") / Setting it to default value.");
 
-                $this->getConfig()->setNested("groups." . $group->getName() . ".nametag", "&l[Guest]&r {DISPLAY_NAME}");
+                $this->getConfig()->setNested("groups." . $group->getName() . ".nametag", "&8&l[" . $group->getName() . "]&f&r {DISPLAY_NAME}");
 
                 $this->saveConfig();
             }
@@ -348,7 +362,7 @@ class PureChat extends PluginBase
             {
                 $this->getLogger()->critical("Invalid nametag found in config.yml (Group: " . $group->getName() . ", WorldName = $levelName) / Setting it to default value.");
 
-                $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.nametag", "&l[Guest]&r {DISPLAY_NAME}");
+                $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.nametag", "&8&l[" . $group->getName() . "]&f&r {DISPLAY_NAME}");
 
                 $this->saveConfig();
             }

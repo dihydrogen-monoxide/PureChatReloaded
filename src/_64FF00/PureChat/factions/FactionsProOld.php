@@ -5,7 +5,7 @@ namespace _64FF00\PureChat\factions;
 use pocketmine\Player;
 use pocketmine\Server;
 
-class FactionsPro implements FactionsInterface
+class FactionsProOld implements FactionsInterface
 {
     /*
         PureChat by 64FF00 (Twitter: @64FF00)
@@ -30,11 +30,11 @@ class FactionsPro implements FactionsInterface
 
     /**
      * @param Player $player
-     * @return mixed
+     * @return string
      */
     public function getPlayerFaction(Player $player)
     {
-        return $this->getAPI()->getPlayerFaction($player);
+        return $this->getAPI()->getPlayerFaction($player->getName());
     }
 
     /**
@@ -43,26 +43,22 @@ class FactionsPro implements FactionsInterface
      */
     public function getPlayerRank(Player $player)
     {
-        if(!$this->getAPI()->isInFaction($player))
+        if($this->getAPI()->isInFaction($player->getName()))
         {
-            return '';
-        }
-
-        $rank = $this->getAPI()->getRank($player);
-
-        switch(strtolower($rank))
-        {
-            case "member":
-
-                return '';
-
-            case "officer":
-
+            if($this->getAPI()->isOfficer($player->getName())) {
                 return '*';
-
-            case "leader":
-
+            }
+            elseif($this->getAPI()->isLeader($player->getName()))
+            {
                 return '**';
+            }
+            else
+            {
+                return '';
+            }
         }
+
+        // TODO
+        return '';
     }
 }

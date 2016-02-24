@@ -4,7 +4,7 @@
 ---
 
 # Set default factions plugin for PureChat
-# - FactionsPro / XeviousPE-Factions / null
+# - FactionsPro / XeviousPE-Factions (§l§9-§8]§b>§7[§cXevious§aTestSrv§7]§b<§8[§9-) / null
 default-factions-plugin: ~
 
 # Enable this if you want to use per-world chat formats / per-world nametags for players
