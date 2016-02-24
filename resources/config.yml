@@ -20,19 +20,19 @@ enable-multiworld-chat: false
 # Available PureChat tags: {DISPLAY_NAME}, {MESSAGE}, {FACTION_NAME}, {FACTION_RANK}, {PREFIX}, {SUFFIX}, {WORLD_NAME}
 groups:
   Guest:
-    chat: "&3&l{PREFIX}&e[Guest]&r {DISPLAY_NAME} &7> {MESSAGE}"
-    nametag: "&3&l{PREFIX}&e[Guest]&r {DISPLAY_NAME}"
+    chat: "&3&l{PREFIX}&e[Guest]&f&r {DISPLAY_NAME} &7> {MESSAGE}"
+    nametag: "&3&l{PREFIX}&e[Guest]&f&r {DISPLAY_NAME}"
     worlds: []
   Admin:
-    chat: "&3&l{PREFIX}&c[Admin]&r {DISPLAY_NAME} &7> {MESSAGE}"
-    nametag: "&3&l{PREFIX}&e[Admin]&r {DISPLAY_NAME}"
+    chat: "&3&l{PREFIX}&c[Admin]&f&r {DISPLAY_NAME} &7> {MESSAGE}"
+    nametag: "&3&l{PREFIX}&e[Admin]&f&r {DISPLAY_NAME}"
     worlds: []
   Owner:
-    chat: "&3&l{PREFIX}&a[Owner]&r {DISPLAY_NAME} &7> {MESSAGE}"
-    nametag: "&3&l{PREFIX}&e[Owner]&r {DISPLAY_NAME}"
+    chat: "&3&l{PREFIX}&a[Owner]&f&r {DISPLAY_NAME} &7> {MESSAGE}"
+    nametag: "&3&l{PREFIX}&e[Owner]&f&r {DISPLAY_NAME}"
     worlds: []
   OP:
-    chat: "&3&l{PREFIX}&9[OP]&r {DISPLAY_NAME} &7> {MESSAGE}"
-    nametag: "&3&l{PREFIX}&e[OP]&r {DISPLAY_NAME}"
+    chat: "&3&l{PREFIX}&9[OP]&f&r {DISPLAY_NAME} &7> {MESSAGE}"
+    nametag: "&3&l{PREFIX}&e[OP]&f&r {DISPLAY_NAME}"
     worlds: []
 ...
