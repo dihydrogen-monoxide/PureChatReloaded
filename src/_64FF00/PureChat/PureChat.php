@@ -316,7 +316,7 @@ class PureChat extends PluginBase
             {
                 $this->getLogger()->critical("Invalid chat format found in config.yml (Group: " . $group->getName() . ") / Setting it to default value.");
 
-                $this->getConfig()->setNested("groups." . $group->getName() . ".chat", "&8&l[" . $group->getName() . "]&f&r {DISPLAY_NAME} &7> {MESSAGE}");
+                $this->getConfig()->setNested("groups." . $group->getName() . ".chat", "&8&l[" . $group->getName() . "]&f&r {display_name} &7> {msg}");
 
                 $this->saveConfig();
             }
@@ -329,7 +329,7 @@ class PureChat extends PluginBase
             {
                 $this->getLogger()->critical("Invalid chat format found in config.yml (Group: " . $group->getName() . ", WorldName = $levelName) / Setting it to default value.");
 
-                $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.chat", "&8&l[" . $group->getName() . "]&f&r {DISPLAY_NAME} &7> {MESSAGE}");
+                $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.chat", "&8&l[" . $group->getName() . "]&f&r {display_name} &7> {msg}");
 
                 $this->saveConfig();
             }
@@ -349,7 +349,7 @@ class PureChat extends PluginBase
             {
                 $this->getLogger()->critical("Invalid nametag found in config.yml (Group: " . $group->getName() . ") / Setting it to default value.");
 
-                $this->getConfig()->setNested("groups." . $group->getName() . ".nametag", "&8&l[" . $group->getName() . "]&f&r {DISPLAY_NAME}");
+                $this->getConfig()->setNested("groups." . $group->getName() . ".nametag", "&8&l[" . $group->getName() . "]&f&r {display_name}");
 
                 $this->saveConfig();
             }
@@ -362,7 +362,7 @@ class PureChat extends PluginBase
             {
                 $this->getLogger()->critical("Invalid nametag found in config.yml (Group: " . $group->getName() . ", WorldName = $levelName) / Setting it to default value.");
 
-                $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.nametag", "&8&l[" . $group->getName() . "]&f&r {DISPLAY_NAME}");
+                $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.nametag", "&8&l[" . $group->getName() . "]&f&r {display_name}");
 
                 $this->saveConfig();
             }
