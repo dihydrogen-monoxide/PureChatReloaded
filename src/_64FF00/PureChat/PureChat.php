@@ -14,6 +14,7 @@ use pocketmine\Player;
 
 use pocketmine\plugin\PluginBase;
 
+use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 
 class PureChat extends PluginBase
@@ -33,6 +34,9 @@ class PureChat extends PluginBase
 
     const MAIN_PREFIX = "\x5b\x50\x75\x72\x65\x43\x68\x61\x74\x3a\x36\x34\x46\x46\x30\x30\x5d";
 
+    /** @var Config $config */
+    private $config;
+
     /** @var FactionsInterface $factionsAPI */
     private $factionsAPI;
 
@@ -43,11 +47,22 @@ class PureChat extends PluginBase
     {
         $this->saveDefaultConfig();
 
+        if(!$this->getConfig()->get("version"))
+        {
+            $version = $this->getDescription()->getVersion();
+
+            $this->getConfig()->set("version", $version);
+
+            $this->upgradeConfig();
+        }
+
         $this->purePerms = $this->getServer()->getPluginManager()->getPlugin("PurePerms");
     }
     
     public function onEnable()
     {
+        $this->config = $this->getConfig();
+
         $this->loadFactionsPlugin();
 
         $this->getServer()->getPluginManager()->registerEvents(new PCListener($this), $this);
@@ -79,7 +94,7 @@ class PureChat extends PluginBase
                     return true;
                 }
 
-                $levelName = $this->getConfig()->get("enable-multiworld-chat") ? $sender->getLevel()->getName() : null;
+                $levelName = $this->config->get("enable-multiworld-chat") ? $sender->getLevel()->getName() : null;
 
                 $prefix = str_replace("{BLANK}", ' ', implode('', $args));
 
@@ -105,7 +120,7 @@ class PureChat extends PluginBase
                     return true;
                 }
 
-                $levelName = $this->getConfig()->get("enable-multiworld-chat") ? $sender->getLevel()->getName() : null;
+                $levelName = $this->config->get("enable-multiworld-chat") ? $sender->getLevel()->getName() : null;
 
                 $suffix = str_replace("{BLANK}", ' ', implode('', $args));
 
@@ -121,7 +136,7 @@ class PureChat extends PluginBase
 
     private function loadFactionsPlugin()
     {
-        $factionsPluginName = $this->getConfig()->get("default-factions-plugin");
+        $factionsPluginName = $this->config->get("default-factions-plugin");
 
         if($factionsPluginName === null)
         {
@@ -312,29 +327,29 @@ class PureChat extends PluginBase
 
         if($levelName === null)
         {
-            if($this->getConfig()->getNested("groups." . $group->getName() . ".chat") === null)
+            if($this->config->getNested("groups." . $group->getName() . ".chat") === null)
             {
                 $this->getLogger()->critical("Invalid chat format found in config.yml (Group: " . $group->getName() . ") / Setting it to default value.");
 
-                $this->getConfig()->setNested("groups." . $group->getName() . ".chat", "&8&l[" . $group->getName() . "]&f&r {display_name} &7> {msg}");
+                $this->config->setNested("groups." . $group->getName() . ".chat", "&8&l[" . $group->getName() . "]&f&r {display_name} &7> {msg}");
 
                 $this->saveConfig();
             }
 
-            return $this->getConfig()->getNested("groups." . $group->getName() . ".chat");
+            return $this->config->getNested("groups." . $group->getName() . ".chat");
         }
         else
         {
-            if($this->getConfig()->getNested("groups." . $group->getName() . "worlds.$levelName.chat") === null)
+            if($this->config->getNested("groups." . $group->getName() . "worlds.$levelName.chat") === null)
             {
                 $this->getLogger()->critical("Invalid chat format found in config.yml (Group: " . $group->getName() . ", WorldName = $levelName) / Setting it to default value.");
 
-                $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.chat", "&8&l[" . $group->getName() . "]&f&r {display_name} &7> {msg}");
+                $this->config->setNested("groups." . $group->getName() . "worlds.$levelName.chat", "&8&l[" . $group->getName() . "]&f&r {display_name} &7> {msg}");
 
                 $this->saveConfig();
             }
 
-            return $this->getConfig()->getNested("groups." . $group->getName() . "worlds.$levelName.chat");
+            return $this->config->getNested("groups." . $group->getName() . "worlds.$levelName.chat");
         }
     }
 
@@ -345,29 +360,29 @@ class PureChat extends PluginBase
 
         if($levelName === null)
         {
-            if($this->getConfig()->getNested("groups." . $group->getName() . ".nametag") === null)
+            if($this->config->getNested("groups." . $group->getName() . ".nametag") === null)
             {
                 $this->getLogger()->critical("Invalid nametag found in config.yml (Group: " . $group->getName() . ") / Setting it to default value.");
 
-                $this->getConfig()->setNested("groups." . $group->getName() . ".nametag", "&8&l[" . $group->getName() . "]&f&r {display_name}");
+                $this->config->setNested("groups." . $group->getName() . ".nametag", "&8&l[" . $group->getName() . "]&f&r {display_name}");
 
                 $this->saveConfig();
             }
 
-            return $this->getConfig()->getNested("groups." . $group->getName() . ".nametag");
+            return $this->config->getNested("groups." . $group->getName() . ".nametag");
         }
         else
         {
-            if($this->getConfig()->getNested("groups." . $group->getName() . "worlds.$levelName.nametag") === null)
+            if($this->config->getNested("groups." . $group->getName() . "worlds.$levelName.nametag") === null)
             {
                 $this->getLogger()->critical("Invalid nametag found in config.yml (Group: " . $group->getName() . ", WorldName = $levelName) / Setting it to default value.");
 
-                $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.nametag", "&8&l[" . $group->getName() . "]&f&r {display_name}");
+                $this->config->setNested("groups." . $group->getName() . "worlds.$levelName.nametag", "&8&l[" . $group->getName() . "]&f&r {display_name}");
 
                 $this->saveConfig();
             }
 
-            return $this->getConfig()->getNested("groups." . $group->getName() . "worlds.$levelName.nametag");
+            return $this->config->getNested("groups." . $group->getName() . "worlds.$levelName.nametag");
         }
     }
 
@@ -428,13 +443,13 @@ class PureChat extends PluginBase
 
         if($levelName === null)
         {
-            $this->getConfig()->setNested("groups." . $group->getName() . ".chat", $chatFormat);
+            $this->config->setNested("groups." . $group->getName() . ".chat", $chatFormat);
 
             $this->saveConfig();
         }
         else
         {
-            $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.chat", $chatFormat);
+            $this->config->setNested("groups." . $group->getName() . "worlds.$levelName.chat", $chatFormat);
 
             $this->saveConfig();
         }
@@ -455,13 +470,13 @@ class PureChat extends PluginBase
 
         if($levelName === null)
         {
-            $this->getConfig()->setNested("groups." . $group->getName() . ".nametag", $nameTag);
+            $this->config->setNested("groups." . $group->getName() . ".nametag", $nameTag);
 
             $this->saveConfig();
         }
         else
         {
-            $this->getConfig()->setNested("groups." . $group->getName() . "worlds.$levelName.nametag", $nameTag);
+            $this->config->setNested("groups." . $group->getName() . "worlds.$levelName.nametag", $nameTag);
 
             $this->saveConfig();
         }
@@ -547,5 +562,73 @@ class PureChat extends PluginBase
         $string = str_replace(TextFormat::RESET, '', $string);
 
         return $string;
+    }
+
+    public function upgradeConfig()
+    {
+        $tempData = $this->getConfig()->getAll();
+
+        if(isset($tempData["default-factions-plugin"]))
+            $tempData["default-factions-plugin"] = null;
+
+        if(isset($tempData["enable-multiworld-support"]))
+        {
+            $tempData["enable-multiworld-chat"] = $tempData["enable-multiworld-support"];
+
+            unset($tempData["enable-multiworld-support"]);
+        }
+
+        if(isset($tempData["custom-no-fac-message"]))
+            unset($tempData["custom-no-fac-message"]);
+
+        if(isset($tempData["groups"]))
+        {
+            foreach($tempData["groups"] as $groupName => $tempGroupData)
+            {
+                if(isset($tempGroupData["default-chat"]))
+                {
+                    $tempGroupData["chat"] = $tempGroupData["default-chat"];
+
+                    unset($tempGroupData["default-chat"]);
+                }
+
+                if(isset($tempGroupData["default-nametag"]))
+                {
+                    $tempGroupData["nametag"] = $tempGroupData["default-nametag"];
+
+                    unset($tempGroupData["default-nametag"]);
+                }
+
+                if(isset($tempGroupData["worlds"]))
+                {
+                    foreach($tempGroupData["worlds"] as $worldName => $worldData)
+                    {
+                        if(isset($worldData["default-chat"]))
+                        {
+                            $worldData["chat"] = $worldData["default-chat"];
+
+                            unset($worldData["default-chat"]);
+                        }
+
+                        if(isset($worldData["default-nametag"]))
+                        {
+                            $worldData["nametag"] = $worldData["default-nametag"];
+
+                            unset($worldData["default-nametag"]);
+                        }
+
+                        $tempGroupData["worlds"][$worldName] = $worldData;
+                    }
+                }
+
+                $tempData["groups"][$groupName] = $tempGroupData;
+            }
+        }
+
+        $this->getConfig()->setAll($tempData);
+
+        $this->getConfig()->save();
+
+        $this->getLogger()->notice("Upgraded PureChat config.yml to the latest version");
     }
 }
