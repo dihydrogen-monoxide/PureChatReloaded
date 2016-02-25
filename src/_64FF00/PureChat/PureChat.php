@@ -254,11 +254,11 @@ class PureChat extends PluginBase
         $string = str_replace("{display_name}", $player->getDisplayName(), $string);
 
         if($message === null)
-            $message = '';
+            $message = "";
 
         if($player->hasPermission("pchat.coloredMessages"))
         {
-            $string = str_replace("{msg}", $message, $string);
+            $string = str_replace("{msg}", $this->applyColors($message), $string);
         }
         else
         {
