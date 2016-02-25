@@ -236,35 +236,35 @@ class PureChat extends PluginBase
     public function applyPCTags($string, Player $player, $message, $levelName)
     {
         // TODO
-        $string = str_replace("{DISPLAY_NAME}", $player->getDisplayName(), $string);
+        $string = str_replace("{display_name}", $player->getDisplayName(), $string);
 
         if($message === null)
             $message = '';
 
         if($player->hasPermission("pchat.coloredMessages"))
         {
-            $string = str_replace("{MESSAGE}", $message, $string);
+            $string = str_replace("{msg}", $message, $string);
         }
         else
         {
-            $string = str_replace("{MESSAGE}", $this->stripColors($message), $string);
+            $string = str_replace("{msg}", $this->stripColors($message), $string);
         }
 
         if($this->factionsAPI !== null)
         {
-            $string = str_replace("{FACTION_NAME}", $this->factionsAPI->getPlayerFaction($player), $string);
-            $string = str_replace("{FACTION_RANK}", $this->factionsAPI->getPlayerRank($player), $string);
+            $string = str_replace("{fac_name}", $this->factionsAPI->getPlayerFaction($player), $string);
+            $string = str_replace("{fac_rank}", $this->factionsAPI->getPlayerRank($player), $string);
         }
         else
         {
-            $string = str_replace("{FACTION_NAME}", '', $string);
-            $string = str_replace("{FACTION_RANK}", '', $string);
+            $string = str_replace("{fac_name}", '', $string);
+            $string = str_replace("{fac_rank}", '', $string);
         }
 
-        $string = str_replace("{WORLD_NAME}", ($levelName === null ? "" : $levelName), $string);
+        $string = str_replace("{world}", ($levelName === null ? "" : $levelName), $string);
 
-        $string = str_replace("{PREFIX}", $this->getPrefix($player, $levelName), $string);
-        $string = str_replace("{SUFFIX}", $this->getSuffix($player, $levelName), $string);
+        $string = str_replace("{prefix}", $this->getPrefix($player, $levelName), $string);
+        $string = str_replace("{suffix}", $this->getSuffix($player, $levelName), $string);
 
         return $string;
     }

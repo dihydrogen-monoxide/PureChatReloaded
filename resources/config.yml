@@ -17,22 +17,22 @@ enable-multiworld-chat: false
 # &a: Green, &b: Aqua, &c: Red, &d: Light Purple, &e: Yellow, &f: White
 # &k: Obfuscated, &l: Bold, &m: Strikethrough, &n: Underline, &o: Italic, &r: Reset
 
-# Available PureChat tags: {DISPLAY_NAME}, {MESSAGE}, {FACTION_NAME}, {FACTION_RANK}, {PREFIX}, {SUFFIX}, {WORLD_NAME}
+# Available PureChat tags: {display_name}, {msg}, {fac_name}, {fac_rank}, {prefix}, {suffix}, {world}
 groups:
   Guest:
-    chat: "&3&l{PREFIX}&e[Guest]&f&r {DISPLAY_NAME} &7> {MESSAGE}"
-    nametag: "&3&l{PREFIX}&e[Guest]&f&r {DISPLAY_NAME}"
+    chat: "&3&l{prefix}&e[Guest]&f&r {display_name} &7> {msg}"
+    nametag: "&3&l{prefix}&e[Guest]&f&r {display_name}"
     worlds: []
   Admin:
-    chat: "&3&l{PREFIX}&c[Admin]&f&r {DISPLAY_NAME} &7> {MESSAGE}"
-    nametag: "&3&l{PREFIX}&e[Admin]&f&r {DISPLAY_NAME}"
+    chat: "&3&l{prefix}&c[Admin]&f&r {display_name} &7> {msg}"
+    nametag: "&3&l{prefix}&c[Admin]&f&r {display_name}"
     worlds: []
   Owner:
-    chat: "&3&l{PREFIX}&a[Owner]&f&r {DISPLAY_NAME} &7> {MESSAGE}"
-    nametag: "&3&l{PREFIX}&e[Owner]&f&r {DISPLAY_NAME}"
+    chat: "&3&l{prefix}&a[Owner]&f&r {display_name} &7> {msg}"
+    nametag: "&3&l{prefix}&a[Owner]&f&r {display_name}"
     worlds: []
   OP:
-    chat: "&3&l{PREFIX}&9[OP]&f&r {DISPLAY_NAME} &7> {MESSAGE}"
-    nametag: "&3&l{PREFIX}&e[OP]&f&r {DISPLAY_NAME}"
+    chat: "&3&l{prefix}&9[OP]&f&r {display_name} &7> {msg}"
+    nametag: "&3&l{prefix}&9[OP]&f&r {display_name}"
     worlds: []
 ...
