@@ -47,13 +47,15 @@ class PureChat extends PluginBase
     {
         $this->saveDefaultConfig();
 
-        if(!$this->getConfig()->get("version"))
+        $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
+
+        if(!$this->config->get("version"))
         {
             $version = $this->getDescription()->getVersion();
 
-            $this->getConfig()->set("version", $version);
+            $this->config->set("version", $version);
 
-            $this->upgradeConfig();
+            $this->fixOldConfig();
         }
 
         $this->purePerms = $this->getServer()->getPluginManager()->getPlugin("PurePerms");
@@ -61,8 +63,6 @@ class PureChat extends PluginBase
     
     public function onEnable()
     {
-        $this->config = $this->getConfig();
-
         $this->loadFactionsPlugin();
 
         $this->getServer()->getPluginManager()->registerEvents(new PCListener($this), $this);
@@ -132,6 +132,117 @@ class PureChat extends PluginBase
         }
 
         return true;
+    }
+
+    private function fixOldConfig()
+    {
+        $tempData = $this->config->getAll();
+
+        $version = $this->getDescription()->getVersion();
+
+        $tempData["version"] = $version;
+
+        if(!isset($tempData["default-factions-plugin"]))
+            $tempData["default-factions-plugin"] = null;
+
+        if(isset($tempData["enable-multiworld-support"]))
+        {
+            $tempData["enable-multiworld-chat"] = $tempData["enable-multiworld-support"];
+
+            unset($tempData["enable-multiworld-support"]);
+        }
+
+        if(isset($tempData["custom-no-fac-message"]))
+            unset($tempData["custom-no-fac-message"]);
+
+        if(isset($tempData["groups"]))
+        {
+            foreach($tempData["groups"] as $groupName => $tempGroupData)
+            {
+                if(isset($tempGroupData["default-chat"]))
+                {
+                    $tempGroupData["chat"] = $this->fixOldData($tempGroupData["default-chat"]);
+
+                    unset($tempGroupData["default-chat"]);
+                }
+
+                if(isset($tempGroupData["default-nametag"]))
+                {
+                    $tempGroupData["nametag"] = $this->fixOldData($tempGroupData["default-nametag"]);
+
+                    unset($tempGroupData["default-nametag"]);
+                }
+
+                if(isset($tempGroupData["worlds"]))
+                {
+                    foreach($tempGroupData["worlds"] as $worldName => $worldData)
+                    {
+                        if(isset($worldData["default-chat"]))
+                        {
+                            $worldData["chat"] = $this->fixOldData($worldData["default-chat"]);
+
+                            unset($worldData["default-chat"]);
+                        }
+
+                        if(isset($worldData["default-nametag"]))
+                        {
+                            $worldData["nametag"] = $this->fixOldData($worldData["default-nametag"]);
+
+                            unset($worldData["default-nametag"]);
+                        }
+
+                        $tempGroupData["worlds"][$worldName] = $worldData;
+                    }
+                }
+
+                $tempData["groups"][$groupName] = $tempGroupData;
+            }
+        }
+
+        $this->config->setAll($tempData);
+        $this->config->save();
+
+        $this->config->reload();
+
+        $this->getLogger()->notice("Upgraded PureChat config.yml to the latest version");
+    }
+
+    /**
+     * @param $string
+     * @return mixed
+     */
+    private function fixOldData($string)
+    {
+        $string = str_replace("{COLOR_BLACK}", "&0", $string);
+        $string = str_replace("{COLOR_DARK_BLUE}", "&1", $string);
+        $string = str_replace("{COLOR_DARK_GREEN}", "&2", $string);
+        $string = str_replace("{COLOR_DARK_AQUA}", "&3", $string);
+        $string = str_replace("{COLOR_DARK_RED}", "&4", $string);
+        $string = str_replace("{COLOR_DARK_PURPLE}", "&5", $string);
+        $string = str_replace("{COLOR_GOLD}", "&6", $string);
+        $string = str_replace("{COLOR_GRAY}", "&7", $string);
+        $string = str_replace("{COLOR_DARK_GRAY}", "&8", $string);
+        $string = str_replace("{COLOR_BLUE}", "&9", $string);
+        $string = str_replace("{COLOR_GREEN}", "&a", $string);
+        $string = str_replace("{COLOR_AQUA}", "&b", $string);
+        $string = str_replace("{COLOR_RED}", "&c", $string);
+        $string = str_replace("{COLOR_LIGHT_PURPLE}", "&d", $string);
+        $string = str_replace("{COLOR_YELLOW}", "&e", $string);
+        $string = str_replace("{COLOR_WHITE}", "&f", $string);
+
+        $string = str_replace("{FORMAT_OBFUSCATED}", "&k", $string);
+        $string = str_replace("{FORMAT_BOLD}", "&l", $string);
+        $string = str_replace("{FORMAT_STRIKETHROUGH}", "&m", $string);
+        $string = str_replace("{FORMAT_UNDERLINE}", "&n", $string);
+        $string = str_replace("{FORMAT_ITALIC}", "&o", $string);
+        $string = str_replace("{FORMAT_RESET}", "&r", $string);
+
+        $string = str_replace("{world_name}", "{world}", $string);
+        $string = str_replace("{faction}", "{fac_rank}{fac_name}", $string);
+        $string = str_replace("{user_name}", "{display_name}", $string);
+        $string = str_replace("{message}", "{msg}", $string);
+
+        return $string;
     }
 
     private function loadFactionsPlugin()
@@ -562,73 +673,5 @@ class PureChat extends PluginBase
         $string = str_replace(TextFormat::RESET, '', $string);
 
         return $string;
-    }
-
-    public function upgradeConfig()
-    {
-        $tempData = $this->getConfig()->getAll();
-
-        if(isset($tempData["default-factions-plugin"]))
-            $tempData["default-factions-plugin"] = null;
-
-        if(isset($tempData["enable-multiworld-support"]))
-        {
-            $tempData["enable-multiworld-chat"] = $tempData["enable-multiworld-support"];
-
-            unset($tempData["enable-multiworld-support"]);
-        }
-
-        if(isset($tempData["custom-no-fac-message"]))
-            unset($tempData["custom-no-fac-message"]);
-
-        if(isset($tempData["groups"]))
-        {
-            foreach($tempData["groups"] as $groupName => $tempGroupData)
-            {
-                if(isset($tempGroupData["default-chat"]))
-                {
-                    $tempGroupData["chat"] = $tempGroupData["default-chat"];
-
-                    unset($tempGroupData["default-chat"]);
-                }
-
-                if(isset($tempGroupData["default-nametag"]))
-                {
-                    $tempGroupData["nametag"] = $tempGroupData["default-nametag"];
-
-                    unset($tempGroupData["default-nametag"]);
-                }
-
-                if(isset($tempGroupData["worlds"]))
-                {
-                    foreach($tempGroupData["worlds"] as $worldName => $worldData)
-                    {
-                        if(isset($worldData["default-chat"]))
-                        {
-                            $worldData["chat"] = $worldData["default-chat"];
-
-                            unset($worldData["default-chat"]);
-                        }
-
-                        if(isset($worldData["default-nametag"]))
-                        {
-                            $worldData["nametag"] = $worldData["default-nametag"];
-
-                            unset($worldData["default-nametag"]);
-                        }
-
-                        $tempGroupData["worlds"][$worldName] = $worldData;
-                    }
-                }
-
-                $tempData["groups"][$groupName] = $tempGroupData;
-            }
-        }
-
-        $this->getConfig()->setAll($tempData);
-
-        $this->getConfig()->save();
-
-        $this->getLogger()->notice("Upgraded PureChat config.yml to the latest version");
     }
 }

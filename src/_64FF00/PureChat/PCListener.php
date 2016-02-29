@@ -8,6 +8,8 @@ use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 
+use pocketmine\Player;
+
 class PCListener implements Listener
 {
     /*
@@ -35,13 +37,17 @@ class PCListener implements Listener
 
     public function onGroupChanged(PPGroupChangedEvent $event)
     {
-        /** @var \pocketmine\Player $player */
+        /** @var \pocketmine\IPlayer $player */
         $player = $event->getPlayer();
-        $levelName = $this->plugin->getConfig()->get("enable-multiworld-chat") ? $player->getLevel()->getName() : null;
+		
+		if($player instanceof Player)
+		{
+			$levelName = $this->plugin->getConfig()->get("enable-multiworld-chat") ? $player->getLevel()->getName() : null;
 
-        $nameTag = $this->plugin->getNametag($player, $levelName);
+			$nameTag = $this->plugin->getNametag($player, $levelName);
 
-        $player->setNameTag($nameTag);
+			$player->setNameTag($nameTag);
+		}
     }
 
     /**
