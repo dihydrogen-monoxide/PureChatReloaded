@@ -7,6 +7,8 @@ use _64FF00\PureChat\factions\FactionsProNew;
 use _64FF00\PureChat\factions\FactionsProOld;
 use _64FF00\PureChat\factions\XeviousPE_Factions;
 
+use _64FF00\PurePerms\PPGroup;
+
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 
@@ -78,6 +80,91 @@ class PureChat extends PluginBase
     {
         switch(strtolower($cmd->getName()))
         {
+            case "setformat":
+
+                if(count($args) < 3)
+                {
+                    $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " Usage: /setformat <group> <world> <format>");
+
+                    return true;
+                }
+
+                $group = $this->purePerms->getGroup($args[0]);
+
+                if($group === null)
+                {
+                    $sender->sendMessage(TextFormat::RED . self::MAIN_PREFIX . " Group " . $args[0] . "does NOT exist.");
+
+                    return true;
+                }
+
+                $levelName = null;
+
+                if($args[1] !== "null" and $args[1] !== "global")
+                {
+                    /** @var \pocketmine\level\Level $level */
+                    $level = $this->getServer()->getLevelByName($args[1]);
+
+                    if ($level === null) {
+                        $sender->sendMessage(TextFormat::RED . self::MAIN_PREFIX . " Invalid World Name!");
+
+                        return true;
+                    }
+
+                    $levelName = $level->getName();
+                }
+
+                $chatFormat = implode(" ", array_slice($args, 2));
+
+                $this->setOriginalChatFormat($group, $chatFormat, $levelName);
+
+                $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " You set the chat format of the group to " . $chatFormat . ".");
+
+                break;
+
+            case "setnametag":
+
+                if(count($args) < 3)
+                {
+                    $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " Usage: /setnametag <group> <world> <format>");
+
+                    return true;
+                }
+
+                $group = $this->purePerms->getGroup($args[0]);
+
+                if($group === null)
+                {
+                    $sender->sendMessage(TextFormat::RED . self::MAIN_PREFIX . " Group " . $args[0] . "does NOT exist.");
+
+                    return true;
+                }
+
+                $levelName = null;
+
+                if($args[1] !== "null" and $args[1] !== "global")
+                {
+                    /** @var \pocketmine\level\Level $level */
+                    $level = $this->getServer()->getLevelByName($args[1]);
+
+                    if ($level === null) {
+                        $sender->sendMessage(TextFormat::RED . self::MAIN_PREFIX . " Invalid World Name!");
+
+                        return true;
+                    }
+
+                    $levelName = $level->getName();
+                }
+
+                $nameTag = implode(" ", array_slice($args, 2));
+
+                $this->setOriginalNametag($group, $nameTag, $levelName);
+
+                $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " You set the nametag of the group to " . $nameTag . ".");
+
+                break;
+
+
             case "setprefix":
 
                 if(!$sender instanceof Player)
@@ -444,7 +531,8 @@ class PureChat extends PluginBase
 
                 $this->config->setNested("groups." . $group->getName() . ".chat", "&8&l[" . $group->getName() . "]&f&r {display_name} &7> {msg}");
 
-                $this->saveConfig();
+                $this->config->save();
+                $this->config->reload();
             }
 
             return $this->config->getNested("groups." . $group->getName() . ".chat");
@@ -457,7 +545,8 @@ class PureChat extends PluginBase
 
                 $this->config->setNested("groups." . $group->getName() . "worlds.$levelName.chat", "&8&l[" . $group->getName() . "]&f&r {display_name} &7> {msg}");
 
-                $this->saveConfig();
+                $this->config->save();
+                $this->config->reload();
             }
 
             return $this->config->getNested("groups." . $group->getName() . "worlds.$levelName.chat");
@@ -477,7 +566,8 @@ class PureChat extends PluginBase
 
                 $this->config->setNested("groups." . $group->getName() . ".nametag", "&8&l[" . $group->getName() . "]&f&r {display_name}");
 
-                $this->saveConfig();
+                $this->config->save();
+                $this->config->reload();
             }
 
             return $this->config->getNested("groups." . $group->getName() . ".nametag");
@@ -490,7 +580,8 @@ class PureChat extends PluginBase
 
                 $this->config->setNested("groups." . $group->getName() . "worlds.$levelName.nametag", "&8&l[" . $group->getName() . "]&f&r {display_name}");
 
-                $this->saveConfig();
+                $this->config->save();
+                $this->config->reload();
             }
 
             return $this->config->getNested("groups." . $group->getName() . "worlds.$levelName.nametag");
@@ -542,55 +633,49 @@ class PureChat extends PluginBase
     }
 
     /**
-     * @param Player $player
+     * @param PPGroup $group
      * @param $chatFormat
      * @param null $levelName
      * @return bool
      */
-    public function setOriginalChatFormat(Player $player, $chatFormat, $levelName = null)
+    public function setOriginalChatFormat(PPGroup $group, $chatFormat, $levelName = null)
     {
-        /** @var \_64FF00\PurePerms\PPGroup $group */
-        $group = $this->purePerms->getUserDataMgr()->getGroup($player, $levelName);
-
         if($levelName === null)
         {
             $this->config->setNested("groups." . $group->getName() . ".chat", $chatFormat);
-
-            $this->saveConfig();
         }
         else
         {
             $this->config->setNested("groups." . $group->getName() . "worlds.$levelName.chat", $chatFormat);
-
-            $this->saveConfig();
         }
+
+        $this->config->save();
+
+        $this->config->reload();
 
         return true;
     }
 
     /**
-     * @param Player $player
+     * @param PPGroup $group
      * @param $nameTag
      * @param null $levelName
      * @return bool
      */
-    public function setOriginalNametag(Player $player, $nameTag, $levelName = null)
+    public function setOriginalNametag(PPGroup $group, $nameTag, $levelName = null)
     {
-        /** @var \_64FF00\PurePerms\PPGroup $group */
-        $group = $this->purePerms->getUserDataMgr()->getGroup($player, $levelName);
-
         if($levelName === null)
         {
             $this->config->setNested("groups." . $group->getName() . ".nametag", $nameTag);
-
-            $this->saveConfig();
         }
         else
         {
             $this->config->setNested("groups." . $group->getName() . "worlds.$levelName.nametag", $nameTag);
-
-            $this->saveConfig();
         }
+
+        $this->config->save();
+
+        $this->config->reload();
 
         return true;
     }

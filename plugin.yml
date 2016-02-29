@@ -1,6 +1,6 @@
 name: PureChat
 main: _64FF00\PureChat\PureChat
-version: "1.4.0-BETA-05"
+version: "1.4.0"
 api: [1.13.0, 2.0.0]
 load: POSTWORLD
 author: 64FF00
@@ -8,6 +8,12 @@ website: https://github.com/PurePlugins/PureChat
 depend: [PurePerms]
 softdepend: [FactionsPro, XeviousPE-Factions]
 commands:
+  setformat:
+      description: "Allows you to set default chat format of a PurePerms group"
+      permission: pchat.command.setformat
+  setnametag:
+    description: "Allows you to set default nametag of a PurePerms group"
+    permission: pchat.command.setnametag
   setprefix:
     description: "Allows you to set your PureChat prefix"
     permission: pchat.command.setprefix
@@ -21,6 +27,10 @@ permissions:
       pchat.command:
         description: "Allows you to use all PureChat commands."
         children:
+          pchat.command.setformat:
+            description: "Allows you to set default chat format of a PurePerms group"
+          pchat.command.setnametag:
+            description: "Allows you to set default nametag of a PurePerms group"
           pchat.command.setprefix:		
             description: "Allows you to set your PureChat prefix"
           pchat.command.setsuffix:		
