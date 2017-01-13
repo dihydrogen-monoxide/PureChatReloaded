@@ -2,6 +2,7 @@
 
 namespace _64FF00\PureChat;
 
+use _64FF00\PureChat\Tags\CustomTagInterface;
 use _64FF00\PurePerms\PPGroup;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
@@ -359,8 +360,20 @@ class PureChat extends PluginBase
     return $string;
   }
 
-  public function registerCustomTags(...$tags) {
+  public function registerCustomTag(CustomTagInterface $tag, $quite = false, &$detail = null)
+  {
+    if (!$tag instanceof CustomTagInterface) {
+      $detail = ["Error" => true, "Reason" => "Unexpected Class, Expecting CustomTagInterface"];
+      if (!$quite) {
+        throw new \Exception("Unexpected Class, Expecting CustomTagInterface");
+      }
+      return false;
+    }
 
+    //todo validate it, and store it somewhere...
+    //validate list: prefix is not registered, does not conflict with defult tags,all functions are callable
+
+    return false;
   }
 
   public function applyCustomTags(string $string, Player $player)
