@@ -349,23 +349,36 @@ class PureChat extends PluginBase
    */
   public function applyPCTags($string, Player $player, $message, $levelName)
   {
-    // TODO
     $string = str_replace("{display_name}", $player->getDisplayName(), $string);
-
-    if ($message === null)
-      $message = "";
-
-    if ($player->hasPermission("pchat.coloredMessages")) {
-      $string = str_replace("{msg}", $this->applyColors($message), $string);
-    } else {
-      $string = str_replace("{msg}", $this->stripColors($message), $string);
-    }
 
     $string = str_replace("{world}", ($levelName === null ? "" : $levelName), $string);
 
     $string = str_replace("{prefix}", $this->getPrefix($player, $levelName), $string);
     $string = str_replace("{suffix}", $this->getSuffix($player, $levelName), $string);
 
+    return $string;
+  }
+
+  public function registerCustomTags(...$tags) {
+
+  }
+
+  public function applyCustomTags(string $string, Player $player)
+  {
+    //todo custom tags
+
+    return $string;
+  }
+
+  public function applyMsg($string, Player $player, $message)
+  {
+    if ($message === null) $message = "";
+
+    if ($player->hasPermission("pchat.coloredMessages")) {
+      $string = str_replace("{msg}", $this->applyColors($message), $string);
+    } else {
+      $string = str_replace("{msg}", $this->stripColors($message), $string);
+    }
     return $string;
   }
 
@@ -381,7 +394,8 @@ class PureChat extends PluginBase
 
     $chatFormat = $this->applyColors($originalChatFormat);
     $chatFormat = $this->applyPCTags($chatFormat, $player, $message, $levelName);
-
+    $chatFormat = $this->applyCustomTags($chatFormat, $player);//
+    $chatFormat = $this->applyMsg($chatFormat, $player, $message);
     return $chatFormat;
   }
 
@@ -396,7 +410,7 @@ class PureChat extends PluginBase
 
     $nameTag = $this->applyColors($originalNametag);
     $nameTag = $this->applyPCTags($nameTag, $player, null, $levelName);
-
+    $nameTag = $this->applyCustomTags($nameTag, $player);
     return $nameTag;
   }
 
