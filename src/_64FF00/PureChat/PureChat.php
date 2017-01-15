@@ -3,6 +3,7 @@
 namespace _64FF00\PureChat;
 
 use _64FF00\PureChat\Errors\ErrorHelper;
+use _64FF00\PureChat\Tags\CustomTagExample;
 use _64FF00\PureChat\Tags\CustomTagInterface;
 use _64FF00\PurePerms\PPGroup;
 use pocketmine\command\Command;
@@ -57,8 +58,8 @@ class PureChat extends PluginBase
 
   public function onEnable()
   {
-
     $this->getServer()->getPluginManager()->registerEvents(new PCListener($this), $this);
+    $this->registerCustomTag(new CustomTagExample());
   }
 
   /**
@@ -385,7 +386,7 @@ class PureChat extends PluginBase
       return false;
     }
 
-    if (preg_match("[a-z]{3,}", $prefix) !== 1) {
+    if (preg_match("/[a-z]{3,}/", $prefix) !== 1) {
       $detail = ["Error" => true, "Reason" => "Prefix must be letters only and at least 3 character"];
       if (!$quite) throw new \Exception("Prefix must be letters only and at least 3 character");
       $tag->onError(ErrorHelper::invalidChar);
@@ -410,7 +411,7 @@ class PureChat extends PluginBase
         $tag->onError(ErrorHelper::notLowercased);
         return false;
       }
-      if (preg_match("[a-z]{3,}", $suffix) !== 1) {
+      if (preg_match("/[a-z]{3,}/", $suffix) !== 1) {
         $detail = ["Error" => true, "Reason" => "Suffix must be letters only and at least 3 character"];
         if (!$quite) throw new \Exception("Suffix must be letters only and at least 3 character");
         $tag->onError(ErrorHelper::invalidChar);
