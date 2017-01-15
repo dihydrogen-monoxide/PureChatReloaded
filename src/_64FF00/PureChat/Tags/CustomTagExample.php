@@ -5,17 +5,23 @@ use pocketmine\Player;
 
 class CustomTagExample implements CustomTagInterface
 {
+  public function onAdd(): void { echo "Added"; }
+
+  public function onRemove(): void { echo "Removed"; }
+
+  public function onFailedAdd($code): void { echo "Fail Added"; }
+
   public function getAPI()
   {
 
   }
 
-  public function getPrefix():string
+  public function getPrefix(): string
   {
     return "test"; //This indicates the prefix of the said tag this would be test_(stffix)
   }
 
-  public function getAllTags():array
+  public function getAllTags(): array
   {
     return [
       "test1" => "test1tag",
@@ -28,6 +34,7 @@ class CustomTagExample implements CustomTagInterface
   {
     return "test";//do something here with player
   }
+
   public function tag2(Player $player)
   {
     return "test2";//do something here with player

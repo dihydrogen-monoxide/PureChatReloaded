@@ -34,6 +34,9 @@ class PureChat extends PluginBase
   /** @var \_64FF00\PurePerms\PurePerms $purePerms */
   private $purePerms;
 
+  /** @var CustomTagInterface[] $customTags */
+  private $customTags = [];
+
   public function onLoad()
   {
     $this->saveDefaultConfig();
@@ -365,16 +368,47 @@ class PureChat extends PluginBase
     if (!$tag instanceof CustomTagInterface) {
       $detail = ["Error" => true, "Reason" => "Unexpected Class, Expecting CustomTagInterface"];
       if (!$quite) {
-        throw new \Exception("Unexpected Class, Expecting CustomTagInterface");
+        throw new \Exception("Unexpected Class, Expecting CustomTagInterface");//todo maybe use custom exception?
       }
       return false;
     }
 
     //todo validate it, and store it somewhere...
-    //validate list: prefix is not registered, does not conflict with defult tags,all functions are callable
+    //validate list:
+    //every letter is lowercased(more user friendly) [X = prefix]
+    //filter prefix to letters ONLY
+    //prefix is not registered
+    //does not conflict with defult tags
+    //all functions are callable
+
+    $prefix = strtolower($tag->getPrefix());
+    if ($prefix !== $tag->getPrefix()) { //rejected because i dont want to call strtolower everytime
+      $detail = ["Error" => true, "Reason" => "Prefix must be lowercase"];
+      if (!$quite) {
+        throw new \Exception("Prefix must be lowercase");
+      }
+
+      return false;
+    }
+
+    //todo prefix letter only filter
+
+    $usedPrefix = ['display'];
+    /** @var CustomTagInterface $cTag */
+    foreach ($this->customTags as $cTag) $usedPrefix[] = $cTag->getPrefix();
+
+    if (in_array($prefix, $usedPrefix)) {
+      $detail = ["Error" => true, "Reason" => "Cannot Register Used Prefix"];
+      if (!$quite) {
+        throw new \Exception("Cannot Register Used Prefix");
+      }
+      return false;
+    }
 
     return false;
   }
+
+  public function registerCustomTags() { }//todo
 
   public function applyCustomTags(string $string, Player $player)
   {
