@@ -2,6 +2,7 @@
 
 namespace _64FF00\PureChat;
 
+use _64FF00\PureChat\Errors\ErrorHelper;
 use _64FF00\PureChat\Tags\CustomTagInterface;
 use _64FF00\PurePerms\PPGroup;
 use pocketmine\command\Command;
@@ -387,7 +388,7 @@ class PureChat extends PluginBase
       if (!$quite) {
         throw new \Exception("Prefix must be lowercase");
       }
-
+      $tag->onFailedAdd(ErrorHelper::notLowercased);
       return false;
     }
 
@@ -402,6 +403,7 @@ class PureChat extends PluginBase
       if (!$quite) {
         throw new \Exception("Cannot Register Used Prefix");
       }
+      $tag->onFailedAdd(ErrorHelper::prefixUsed);
       return false;
     }
 
