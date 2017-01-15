@@ -426,6 +426,7 @@ class PureChat extends PluginBase
       //maybe reflector to check if it only need Player ??
     }
     $this->customTags[] = $tag;
+    $this->getLogger()->debug("Successfully registered {$tag->getPrefix()}_ with ".count($tag->getAllTags())." tags");
     return true;
   }
 
