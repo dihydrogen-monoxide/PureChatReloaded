@@ -8,7 +8,7 @@ interface CustomTagInterface
 
   public function onRemove():void;//calls when it is removed by internal reasons
 
-  public function onFailedAdd($code):void;//calls when fails to be added with reason
+  public function onError($code):void;//calls when fails to be added OR when error is detected while processing with reason
 
   public function getPrefix():string;
 

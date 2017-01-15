@@ -350,16 +350,17 @@ class PureChat extends PluginBase
    * @param Player $player
    * @param $message
    * @param null $levelName
+   * @param $msg bool
    * @return mixed
    */
-  public function applyPCTags($string, Player $player, $message, $levelName)
+  public function applyPCTags($string, Player $player, $message, $levelName, $msg = false)
   {
     $string = str_replace("{display_name}", $player->getDisplayName(), $string);
-
     $string = str_replace("{world}", ($levelName === null ? "" : $levelName), $string);
-
     $string = str_replace("{prefix}", $this->getPrefix($player, $levelName), $string);
     $string = str_replace("{suffix}", $this->getSuffix($player, $levelName), $string);
+
+    if ($msg) $string = $this->applyMsg($string, $player, $message);
 
     return $string;
   }
@@ -368,31 +369,28 @@ class PureChat extends PluginBase
   {
     if (!$tag instanceof CustomTagInterface) {
       $detail = ["Error" => true, "Reason" => "Unexpected Class, Expecting CustomTagInterface"];
-      if (!$quite) {
-        throw new \Exception("Unexpected Class, Expecting CustomTagInterface");//todo maybe use custom exception?
-      }
+      if (!$quite) throw new \Exception("Unexpected Class, Expecting CustomTagInterface");//todo maybe use custom exception?
       return false;
     }
 
-    //todo validate it, and store it somewhere...
     //validate list:
-    //every letter is lowercased(more user friendly) [X = prefix]
-    //filter prefix to letters ONLY
+    //lowercased, filter to letters ONLY,
     //prefix is not registered
-    //does not conflict with defult tags
-    //all functions are callable
 
     $prefix = strtolower($tag->getPrefix());
     if ($prefix !== $tag->getPrefix()) { //rejected because i dont want to call strtolower everytime
       $detail = ["Error" => true, "Reason" => "Prefix must be lowercase"];
-      if (!$quite) {
-        throw new \Exception("Prefix must be lowercase");
-      }
-      $tag->onFailedAdd(ErrorHelper::notLowercased);
+      if (!$quite) throw new \Exception("Prefix must be lowercase");
+      $tag->onError(ErrorHelper::notLowercased);
       return false;
     }
 
-    //todo prefix letter only filter
+    if (preg_match("[a-z]{3,}", $prefix) !== 1) {
+      $detail = ["Error" => true, "Reason" => "Prefix must be letters only and at least 3 character"];
+      if (!$quite) throw new \Exception("Prefix must be letters only and at least 3 character");
+      $tag->onError(ErrorHelper::invalidChar);
+      return false;
+    }
 
     $usedPrefix = ['display'];
     /** @var CustomTagInterface $cTag */
@@ -400,17 +398,37 @@ class PureChat extends PluginBase
 
     if (in_array($prefix, $usedPrefix)) {
       $detail = ["Error" => true, "Reason" => "Cannot Register Used Prefix"];
-      if (!$quite) {
-        throw new \Exception("Cannot Register Used Prefix");
-      }
-      $tag->onFailedAdd(ErrorHelper::prefixUsed);
+      if (!$quite) throw new \Exception("Cannot Register Used Prefix");
+      $tag->onError(ErrorHelper::prefixUsed);
       return false;
     }
 
-    return false;
+    foreach ($tag->getAllTags() as $suffix => $function) {
+      if ($suffix !== strtolower($suffix)) {
+        $detail = ["Error" => true, "Reason" => "Sufix must be lowercase"];
+        if (!$quite) throw new \Exception("Sufix must be lowercase");
+        $tag->onError(ErrorHelper::notLowercased);
+        return false;
+      }
+      if (preg_match("[a-z]{3,}", $suffix) !== 1) {
+        $detail = ["Error" => true, "Reason" => "Suffix must be letters only and at least 3 character"];
+        if (!$quite) throw new \Exception("Suffix must be letters only and at least 3 character");
+        $tag->onError(ErrorHelper::invalidChar);
+        return false;
+      }
+      if (!is_callable([$tag, $function])) {
+        $detail = ["Error" => true, "Reason" => "Suffix function uncallable"];
+        if (!$quite) throw new \Exception("Suffix function uncallable");
+        $tag->onError(ErrorHelper::suffixFuncInvalid);
+        return false;
+      }
+      //maybe reflector to check if it only need Player ??
+    }
+    $this->customTags[] = $tag;
+    return true;
   }
 
-  public function registerCustomTags() { }//todo
+  private function registerCustomTags() { }//todo
 
   public function applyCustomTags(string $string, Player $player)
   {

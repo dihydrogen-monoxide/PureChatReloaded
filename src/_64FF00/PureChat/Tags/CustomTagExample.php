@@ -9,7 +9,7 @@ class CustomTagExample implements CustomTagInterface
 
   public function onRemove(): void { echo "Removed"; }
 
-  public function onFailedAdd($code): void { echo "Fail Added"; }
+  public function onError($code): void { echo "Fail Added"; }
 
   public function getAPI()
   {
