@@ -1,15 +1,16 @@
 <?php
 namespace _64FF00\PureChat\Tags;
 
+use _64FF00\PureChat\Errors\ErrorHelper;
 use pocketmine\Player;
 
 class CustomTagExample implements CustomTagInterface
 {
-  public function onAdd(): void { echo "Added"; }
+  public function onAdd(){ echo "Added"; }
 
-  public function onRemove(): void { echo "Removed"; }
+  public function onRemove(){ echo "Removed"; }
 
-  public function onError($code): void { echo "Fail Added"; }
+  public function onError($code){ echo "\n\nFail Added $code, " . ErrorHelper::getDetails($code) . "\n\n"; }
 
   public function getAPI()
   {
@@ -24,19 +25,19 @@ class CustomTagExample implements CustomTagInterface
   public function getAllTags(): array
   {
     return [
-      "test1" => "test1tag",
-      "test2" => "tag2",
+      "test" => "test1tag",
+      "testing" => "tag2",
       //"suffix" => "callable fucntion"
     ];
   }
 
   public function test1tag(Player $player)
   {
-    return "test";//do something here with player
+    return "test!";//do something here with player
   }
 
   public function tag2(Player $player)
   {
-    return "test2";//do something here with player
+    return "testing!";//do something here with player
   }
 }
