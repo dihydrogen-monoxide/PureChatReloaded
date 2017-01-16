@@ -6,11 +6,13 @@ use pocketmine\Player;
 
 class CustomTagExample implements CustomTagInterface
 {
-  public function onAdd(){ echo "Added"; }
+  static $count = 1;
 
-  public function onRemove(){ echo "Removed"; }
+  public function onAdd() { echo "Added"; }
 
-  public function onError($code){ echo "\n\nFail Added $code, " . ErrorHelper::getDetails($code) . "\n\n"; }
+  public function onRemove() { echo "Removed"; }
+
+  public function onError($code) { echo "\n\nFail Added $code, " . ErrorHelper::getDetails($code) . "\n\n"; }
 
   public function getAPI()
   {
@@ -25,19 +27,26 @@ class CustomTagExample implements CustomTagInterface
   public function getAllTags(): array
   {
     return [
-      "test" => "test1tag",
-      "testing" => "tag2",
+      "test" => "testing",
+      "count" => "countIt",
+      "rand" => "randIt"
       //"suffix" => "callable fucntion"
     ];
   }
 
-  public function test1tag(Player $player)
+  public function testing(Player $player)
   {
     return "test!";//do something here with player
   }
 
-  public function tag2(Player $player)
+  public function countIt(Player $player)
   {
-    return "testing!";//do something here with player
+    self::$count++;
+    return self::$count;
+  }
+
+  public function randIt(Player $player)
+  {
+    return md5(mt_rand() + self::$count + time());
   }
 }

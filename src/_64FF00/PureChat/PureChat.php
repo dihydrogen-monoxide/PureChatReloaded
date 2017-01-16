@@ -449,6 +449,7 @@ class PureChat extends PluginBase
         return false;
       }
       //maybe reflector to check if it only need Player ??
+      //maybe do a test call to all functions and check their return
     }
     $this->customTags[] = $tag; //need a new way to store things that arent too hacky
     $tags = '';
@@ -461,30 +462,25 @@ class PureChat extends PluginBase
 
   public function applyCustomTags(string $string, Player $player)
   {
-    //todo custom tags
-    $tags = [];
-    foreach ($this->customTags as $ref => $ctag) {
+    foreach ($this->customTags as $ref => $ctag)
       foreach ($ctag->getAllTags() as $suffix => $func) {
-        $tags['{' . $ctag->getPrefix() . "_" . $suffix . '}'] = [$ctag, $func, $ref];
+        $suffix = '{' . $ctag->getPrefix() . "_" . $suffix . '}';
+        if (strpos($string, $suffix) !== false) //yay remove un nessary calls
+          try {
+            $call = call_user_func([$ctag, $func], $player);
+            if (!is_string($call) AND !is_numeric($call)) {
+              $this->getLogger()->debug("Removing X CustomTag due to invalid return\n");
+              $ctag->onRemove();
+              unset($this->customTags[$ref]);
+              continue;
+            }
+            $string = str_replace($suffix, $call, $string);
+          } catch (\Exception$exception) {
+            $this->getLogger()->debug("Removing X CustomTag due to unknow thrown exception\n ERROR: {$exception->getMessage()}");
+            $ctag->onRemove();
+            unset($this->customTags[$ref]);
+          }
       }
-    }
-
-    foreach ($tags as $suffix => $func) { //todo merge to above this seems better then using regex
-      try {
-        $call = call_user_func([$func[0], $func[1]],$player);
-        if (!is_string($call) AND !is_numeric($call) ){
-          $this->getLogger()->debug("Removing X CustomTag due to invalid return\n");
-          $func[0]->onRemove();
-          unset($this->customTags[$func[2]]);
-          continue;
-        }
-        $string = str_replace($suffix, $call, $string);
-      } catch (\Exception$exception) {
-        $this->getLogger()->debug("Removing X CustomTag due to unknow thrown exception\n ERROR: {$exception->getMessage()}");
-        $func[0]->onRemove();
-        unset($this->customTags[$func[2]]);
-      }
-    }
 
     return $string;
   }

@@ -24,7 +24,7 @@ enable-multiworld-chat: false
 # Available PureChat tags: {display_name}, {msg}, {prefix}, {suffix}, {world}
 groups:
   Guest:
-    chat: "&3&l{prefix}&e[Guest]&f&r {display_name} &7> {msg}"
+    chat: "&3&l{prefix}&e{test_count}&f {test_rand}&r {display_name} &7> {msg}"
     nametag: "&3&l{prefix}&e[Guest]&f&r {display_name}"
     worlds: []
   Admin:
