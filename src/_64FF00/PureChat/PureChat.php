@@ -395,24 +395,13 @@ class PureChat extends PluginBase
   public function registerCustomTag(CustomTagInterface $tag, $quite = false, &$detail = null)
   {
     //todo rearrange: onerror first after throw or onerror wont get called
-    if (!$tag instanceof CustomTagInterface) {
-      $detail = ["Error" => true, "Reason" => "Unexpected Class, Expecting CustomTagInterface"];
-      if (!$quite) throw new \Exception("Unexpected Class, Expecting CustomTagInterface");//todo maybe use custom exception?
-      return false;
-    }
 
     $prefix = strtolower($tag->getPrefix());
-    if ($prefix !== $tag->getPrefix()) { //rejected because i dont want to call strtolower everytime
-      $detail = ["Error" => true, "Reason" => "Prefix must be lowercase"];
-      if (!$quite) throw new \Exception("Prefix must be lowercase");
-      $tag->onError(ErrorHelper::notLowercased);
-      return false;
-    }
 
     if (preg_match("/^[a-z]{3,}$/", $prefix) !== 1) {
       $detail = ["Error" => true, "Reason" => "Prefix must be letters only and at least 3 character"];
       if (!$quite) throw new \Exception("Prefix must be letters only and at least 3 character");
-      $tag->onError(ErrorHelper::invalidChar);
+      $tag->onError(ErrorHelper::invalid_char);
       return false;
     }
 
@@ -423,7 +412,7 @@ class PureChat extends PluginBase
     if (in_array($prefix, $usedPrefix)) {
       $detail = ["Error" => true, "Reason" => "Cannot Register Used Prefix"];
       if (!$quite) throw new \Exception("Cannot Register Used Prefix");
-      $tag->onError(ErrorHelper::prefixUsed);
+      $tag->onError(ErrorHelper::prefix_used);
       return false;
     }
 
@@ -433,19 +422,19 @@ class PureChat extends PluginBase
       if ($suffix !== strtolower($suffix)) {
         $detail = ["Error" => true, "Reason" => "Sufix must be lowercase"];
         if (!$quite) throw new \Exception("Sufix must be lowercase");
-        $tag->onError(ErrorHelper::notLowercased);
+        $tag->onError(ErrorHelper::not_lowercased);
         return false;
       }
       if (preg_match("/^[a-z]{3,}$/", $suffix) !== 1) {
         $detail = ["Error" => true, "Reason" => "Suffix must be letters only and at least 3 character"];
         if (!$quite) throw new \Exception("Suffix must be letters only and at least 3 character");
-        $tag->onError(ErrorHelper::invalidChar);
+        $tag->onError(ErrorHelper::invalid_char);
         return false;
       }
       if (!is_callable([$tag, $function])) {
         $detail = ["Error" => true, "Reason" => "Suffix function uncallable"];
         if (!$quite) throw new \Exception("Suffix function uncallable");
-        $tag->onError(ErrorHelper::suffixFuncInvalid);
+        $tag->onError(ErrorHelper::suffix_func_invalid);
         return false;
       }
       //maybe reflector to check if it only need Player ??
