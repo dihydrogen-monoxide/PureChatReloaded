@@ -398,9 +398,9 @@ class PureChat extends PluginBase
 
     $prefix = strtolower($tag->getPrefix());
 
-    if (preg_match("/^[a-z]{3,}$/", $prefix) !== 1) {
-      $detail = ["Error" => true, "Reason" => "Prefix must be letters only and at least 3 character"];
-      if (!$quite) throw new \Exception("Prefix must be letters only and at least 3 character");
+    if (preg_match("/^[a-z]{3,}$/", $tag->getPrefix()) !== 1) {
+      $detail = ["Error" => true, "Reason" => "Prefix must be lowercased letters only and at least 3 character"];
+      if (!$quite) throw new \Exception("Prefix must be lowercased letters only and at least 3 character");
       $tag->onError(ErrorHelper::invalid_char);
       return false;
     }
