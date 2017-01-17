@@ -398,10 +398,18 @@ class PureChat extends PluginBase
 
     $prefix = strtolower($tag->getPrefix());
 
+    if ($prefix !== $tag->getPrefix()) {
+      $detail = ["Error" => true, "Reason" => "Prefix must be lowercase"];
+      $tag->onError(ErrorHelper::not_lowercased);
+      if (!$quite) {
+        throw new \Exception("Prefix must be lowercase");
+      }
+      return false;
+    }
     if (preg_match("/^[a-z]{3,}$/", $tag->getPrefix()) !== 1) {
       $detail = ["Error" => true, "Reason" => "Prefix must be lowercased letters only and at least 3 character"];
-      if (!$quite) throw new \Exception("Prefix must be lowercased letters only and at least 3 character");
       $tag->onError(ErrorHelper::invalid_char);
+      if (!$quite) throw new \Exception("Prefix must be lowercased letters only and at least 3 character");
       return false;
     }
 
@@ -411,8 +419,8 @@ class PureChat extends PluginBase
 
     if (in_array($prefix, $usedPrefix)) {
       $detail = ["Error" => true, "Reason" => "Cannot Register Used Prefix"];
-      if (!$quite) throw new \Exception("Cannot Register Used Prefix");
       $tag->onError(ErrorHelper::prefix_used);
+      if (!$quite) throw new \Exception("Cannot Register Used Prefix");
       return false;
     }
 
@@ -421,20 +429,20 @@ class PureChat extends PluginBase
     foreach ($tag->getAllTags() as $suffix => $function) {
       if ($suffix !== strtolower($suffix)) {
         $detail = ["Error" => true, "Reason" => "Sufix must be lowercase"];
-        if (!$quite) throw new \Exception("Sufix must be lowercase");
         $tag->onError(ErrorHelper::not_lowercased);
+        if (!$quite) throw new \Exception("Sufix must be lowercase");
         return false;
       }
       if (preg_match("/^[a-z]{3,}$/", $suffix) !== 1) {
         $detail = ["Error" => true, "Reason" => "Suffix must be letters only and at least 3 character"];
-        if (!$quite) throw new \Exception("Suffix must be letters only and at least 3 character");
         $tag->onError(ErrorHelper::invalid_char);
+        if (!$quite) throw new \Exception("Suffix must be letters only and at least 3 character");
         return false;
       }
       if (!is_callable([$tag, $function])) {
         $detail = ["Error" => true, "Reason" => "Suffix function uncallable"];
-        if (!$quite) throw new \Exception("Suffix function uncallable");
         $tag->onError(ErrorHelper::suffix_func_invalid);
+        if (!$quite) throw new \Exception("Suffix function uncallable");
         return false;
       }
       //maybe reflector to check if it only need Player ??
@@ -459,14 +467,14 @@ class PureChat extends PluginBase
             $call = call_user_func([$ctag, $func], $player);
             if (!is_string($call) AND !is_numeric($call)) {
               $this->getLogger()->debug("Removing X CustomTag due to invalid return\n");
-              $ctag->onRemove();
+              $ctag->onRemove(ErrorHelper::proc_invalid_ret);
               unset($this->customTags[$ref]);
               continue;
             }
             $string = str_replace($suffix, $call, $string);
-          } catch (\Exception$exception) {
+          } catch (\Exception$exception) {//todo try only catch error that will cause PM to kill the plugin and ignore general errors
             $this->getLogger()->debug("Removing X CustomTag due to unknow thrown exception\n ERROR: {$exception->getMessage()}");
-            $ctag->onRemove();
+            $ctag->onRemove(ErrorHelper::proc_throw);
             unset($this->customTags[$ref]);
           }
       }
