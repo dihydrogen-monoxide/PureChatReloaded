@@ -394,8 +394,6 @@ class PureChat extends PluginBase
 
   public function registerCustomTag(CustomTagInterface $tag, $quite = false, &$detail = null)
   {
-    //todo rearrange: onerror first after throw or onerror wont get called
-
     $prefix = strtolower($tag->getPrefix());
 
     if ($prefix !== $tag->getPrefix()) {
