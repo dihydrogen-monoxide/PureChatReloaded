@@ -8,16 +8,11 @@ class CustomTagExample implements CustomTagInterface
 {
   static $count = 1;
 
-  public function onAdd() { echo "Added"; }
+  public function onAdd() { echo "\nAdded\n"; }
 
-  public function onRemove() { echo "Removed"; }
+  public function onRemove($code = 0) { echo "\n\nRemoved Due to $code, " . ErrorHelper::getDetails($code) . "\n\n"; }
 
   public function onError($code) { echo "\n\nFail Added $code, " . ErrorHelper::getDetails($code) . "\n\n"; }
-
-  public function getAPI()
-  {
-
-  }
 
   public function getPrefix(): string
   {
@@ -35,11 +30,13 @@ class CustomTagExample implements CustomTagInterface
   }
 
   public function testing(Player $player)
+    //Player is NEEDED as it will automatically be passed reagrdless of anything
+    //Not adding Player OR editing it may cause PHP to throw a error which may result of getting this tag removed
   {
-    return "test!";//do something here with player
+    return "Works!";//do something here with player
   }
 
-  public function countIt(Player $player)
+  public function countIt(Player $player) //more examples
   {
     self::$count++;
     return self::$count;
@@ -47,6 +44,7 @@ class CustomTagExample implements CustomTagInterface
 
   public function randIt(Player $player)
   {
-    return md5(mt_rand() + self::$count + time());
+    mt_srand(self::$count + microtime(true));
+    return mt_rand(0, 1000);
   }
 }

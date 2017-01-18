@@ -2,8 +2,6 @@
 namespace _64FF00\PureChat\Tags;
 interface CustomTagInterface
 {
-  public function getAPI();
-
   public function onAdd();//calls when it is added
 
   public function onRemove($code = 0);//calls when it is removed by internal reasons

@@ -14,7 +14,6 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\scheduler\PluginTask;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
-use specter\api\DummyPlayer;
 
 class PureChat extends PluginBase
 {
@@ -65,27 +64,27 @@ class PureChat extends PluginBase
   {
     $this->getServer()->getPluginManager()->registerEvents(new PCListener($this), $this);
     $this->registerCustomTag(new CustomTagExample(), true);
-
-    $this->getServer()->getScheduler()->scheduleDelayedTask(
-      new class($this) extends PluginTask
-      {
-        /** @var PureChat */
-        protected $owner;
-
-        public function __construct(Plugin $owner) { parent::__construct($owner); }
-
-        public function onRun($currentTick) { $this->owner->delayedStart(); }
-      }
-      , 60);
   }
 
-  public function delayedStart()
+  private function registerCallBack(callable $callback, array $param, $tick)
   {
-    $this->player = new DummyPlayer("Debug", "DEBUG", 19132);
-    echo "\ndelayedStart:\n";
-    $ret = $this->applyCustomTags("{not_found} {test_test}", $this->player->getPlayer());
-    echo "RET:\n";
-    print_r($ret);
+    $task = new class($this, $callback, $param) extends PluginTask
+    {
+      /** @var PureChat */
+      protected $owner;
+      private $callback;
+      private $param;
+
+      public function __construct(Plugin $owner, callable $callback, array $param)
+      {
+        parent::__construct($owner);
+        $this->callback = $callback;
+        $this->param = $param;
+      }
+
+      public function onRun($currentTick) { call_user_func_array($this->callback, $this->param); }
+    };
+    $this->getServer()->getScheduler()->scheduleDelayedTask($task, $tick);
   }
 
   /**
@@ -405,9 +404,9 @@ class PureChat extends PluginBase
       return false;
     }
     if (preg_match("/^[a-z]{3,}$/", $tag->getPrefix()) !== 1) {
-      $detail = ["Error" => true, "Reason" => "Prefix must be lowercased letters only and at least 3 character"];
+      $detail = ["Error" => true, "Reason" => "Prefix must be letters only and at least 3 character"];
       $tag->onError(ErrorHelper::invalid_char);
-      if (!$quite) throw new \Exception("Prefix must be lowercased letters only and at least 3 character");
+      if (!$quite) throw new \Exception("Prefix must be letters only and at least 3 character");
       return false;
     }
 
@@ -422,8 +421,7 @@ class PureChat extends PluginBase
       return false;
     }
 
-    //echo "\n\nPrefixes:\n" . print_r($tag->getAllTags(), true) . "\n\n";
-
+    $tags = '';
     foreach ($tag->getAllTags() as $suffix => $function) {
       if ($suffix !== strtolower($suffix)) {
         $detail = ["Error" => true, "Reason" => "Sufix must be lowercase"];
@@ -443,12 +441,13 @@ class PureChat extends PluginBase
         if (!$quite) throw new \Exception("Suffix function uncallable");
         return false;
       }
+      $tags .= "$suffix ";
       //maybe reflector to check if it only need Player ??
       //maybe do a test call to all functions and check their return
     }
+    $tag->onAdd();
     $this->customTags[] = $tag; //need a new way to store things that arent too hacky
-    $tags = '';
-    foreach ($tag->getAllTags() as $suffix => $func) $tags .= "$suffix ";
+
     $this->getLogger()->debug("Successfully registered {$tag->getPrefix()}_ with " . count($tag->getAllTags()) . " tags ($tags)");
     return true;
   }
@@ -460,18 +459,24 @@ class PureChat extends PluginBase
     foreach ($this->customTags as $ref => $ctag)
       foreach ($ctag->getAllTags() as $suffix => $func) {
         $suffix = '{' . $ctag->getPrefix() . "_" . $suffix . '}';
-        if (strpos($string, $suffix) !== false) //yay remove un nessary calls
+        if (strpos($string, $suffix) !== false)
           try {
             $call = call_user_func([$ctag, $func], $player);
-            if (!is_string($call) AND !is_numeric($call)) {
-              $this->getLogger()->debug("Removing X CustomTag due to invalid return\n");
+            if (
+              (!is_array($call)) AND
+              (
+                (!is_object($call) AND settype($call, 'string') !== false) OR
+                (is_object($call) AND method_exists($call, '__toString'))
+              )
+            ) {
+              $this->getLogger()->debug("Removing {$ctag->getPrefix()} CustomTag due to invalid return\nprint_r: " . print_r($call, true) . "\n");
               $ctag->onRemove(ErrorHelper::proc_invalid_ret);
               unset($this->customTags[$ref]);
               continue;
             }
             $string = str_replace($suffix, $call, $string);
           } catch (\Exception$exception) {//todo try only catch error that will cause PM to kill the plugin and ignore general errors
-            $this->getLogger()->debug("Removing X CustomTag due to unknow thrown exception\n ERROR: {$exception->getMessage()}");
+            $this->getLogger()->debug("Removing CustomTag {$ctag->getPrefix()} due to unknow thrown exception\n ERROR: {$exception->getMessage()}");
             $ctag->onRemove(ErrorHelper::proc_throw);
             unset($this->customTags[$ref]);
           }
@@ -504,7 +509,7 @@ class PureChat extends PluginBase
 
     $chatFormat = $this->applyColors($originalChatFormat);
     $chatFormat = $this->applyPCTags($chatFormat, $player, $message, $levelName);
-    $chatFormat = $this->applyCustomTags($chatFormat, $player);//
+    $chatFormat = $this->applyCustomTags($chatFormat, $player);
     $chatFormat = $this->applyMsg($chatFormat, $player, $message);
     return $chatFormat;
   }
