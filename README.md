@@ -1,6 +1,8 @@
 PureChat Reloaded
 ========
 
+##Document For Developer: [Custom Tag Document](https://github.com/dihydrogen-monoxide/PureChatReloaded/wiki/CustomTag)
+
 Features
 - Implementable Custom Tags with API
 
