@@ -8,7 +8,7 @@ PureChat Reloaded
 <meta name='keywords' content='PureChat, Pure Chat, PureChat Reloaded, PureChatReloaded'>
 ##Document For Developer: [Custom Tag Document](https://github.com/dihydrogen-monoxide/PureChatReloaded/wiki/CustomTag)
 
-Reloaded version of PureChat By [64FF00](https://github.com/64FF00) For: pocketmine pmmp genisys
+Reloaded version of PureChat By [64FF00](https://github.com/64FF00) For: pocketmine pocket mine pmmp genisys
 
 Features
 - Implementable Custom Tags with API
