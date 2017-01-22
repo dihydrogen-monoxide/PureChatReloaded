@@ -3,16 +3,23 @@ namespace _64FF00\PureChat\Tags;
 
 use _64FF00\PureChat\Errors\ErrorHelper;
 use pocketmine\Player;
+use pocketmine\Server;
 
 class CustomTagExample implements CustomTagInterface
 {
   static $count = 1;
+  private $logger;
 
-  public function onAdd() { echo "\nAdded\n"; }
+  public function __construct(Server $server)
+  {
+    $this->logger = $server->getLogger();
+  }
 
-  public function onRemove($code = 0) { echo "\n\nRemoved Due to $code, " . ErrorHelper::getDetails($code) . "\n\n"; }
+  public function onAdd() { $this->logger->info("Custom Tag Added!"); }
 
-  public function onError($code) { echo "\n\nFail Added $code, " . ErrorHelper::getDetails($code) . "\n\n"; }
+  public function onRemove($code = 0) { $this->logger->info("Removed Due to $code, " . ErrorHelper::getDetails($code)); }
+
+  public function onError($code) { $this->logger->info("Fail Added $code, " . ErrorHelper::getDetails($code)); }
 
   public function getPrefix(): string
   {
