@@ -62,8 +62,11 @@ class PureChat extends PluginBase
 
   public function onEnable()
   {
-    $this->getServer()->getPluginManager()->registerEvents(new PCListener($this), $this);
-    $this->registerCustomTag(new CustomTagExample(), true);
+    if ($this->getConfig()->get("enable-example-tags", false) == true) {
+      $this->getLogger()->info("Enabling Example Tags...");
+      $this->getServer()->getPluginManager()->registerEvents(new PCListener($this), $this);
+      $this->registerCustomTag(new CustomTagExample($this->getServer()), true);
+    }
   }
 
   private function registerCallBack(callable $callback, array $param, $tick)
