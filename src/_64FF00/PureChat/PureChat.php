@@ -41,19 +41,14 @@ class PureChat extends PluginBase
   /** @var CustomTagInterface[] $customTags */
   private $customTags = [];
 
-  private $player;
-
   public function onLoad()
   {
     $this->saveDefaultConfig();
-
     $this->config = new Config($this->getDataFolder() . "config.yml", Config::YAML);
 
     if (!$this->config->get("version")) {
       $version = $this->getDescription()->getVersion();
-
       $this->config->set("version", $version);
-
       $this->fixOldConfig();
     }
 
@@ -223,6 +218,21 @@ class PureChat extends PluginBase
 
         $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " You set your suffix to " . $suffix . ".");
 
+        break;
+
+      case "listcustomtags":
+        $taglist = [];
+        foreach ($this->customTags as $tag) {
+          $suffixes = '';
+          foreach ($tag->getAllTags() as $suffix => $func) {
+            $suffixes .= $suffix . ' ';
+          }
+          $taglist[] = $tag->getPrefix() . " -> " . $suffixes;
+        }
+
+        $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " Avaliable Tags:");
+        $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " Prefix -> Suffixes");
+        foreach ($taglist as $text) $sender->sendMessage(TextFormat::GREEN . self::MAIN_PREFIX . " " . $text);
         break;
     }
 
@@ -466,20 +476,20 @@ class PureChat extends PluginBase
           try {
             $call = call_user_func([$ctag, $func], $player);
             if (
-              (!is_array($call)) AND
-              (
-                (!is_object($call) AND settype($call, 'string') !== false) OR
-                (is_object($call) AND method_exists($call, '__toString'))
-              )
+              is_array($call) OR
+              (!is_object($call) AND settype($call, 'string') == false) OR
+              (is_object($call) AND !method_exists($call, '__toString'))
+              //OR !(is_scalar($call) OR is_string($call) OR is_numeric($call) OR (string)$call)
             ) {
-              $this->getLogger()->debug("Removing {$ctag->getPrefix()} CustomTag due to invalid return\nprint_r: " . print_r($call, true) . "\n");
+              $this->getLogger()->alert("Removing {$ctag->getPrefix()} On $suffix Suffix due to invalid return print_r: " . print_r($call, true));
               $ctag->onRemove(ErrorHelper::proc_invalid_ret);
               unset($this->customTags[$ref]);
               continue;
             }
             $string = str_replace($suffix, $call, $string);
           } catch (\Exception$exception) {//todo try only catch error that will cause PM to kill the plugin and ignore general errors
-            $this->getLogger()->debug("Removing CustomTag {$ctag->getPrefix()} due to unknow thrown exception\n ERROR: {$exception->getMessage()}");
+            $this->getLogger()->alert("Removing CustomTag {$ctag->getPrefix()} On $suffix Suffix due to unknow thrown exception\n ERROR: {$exception->getMessage()}");
+            $this->getLogger()->debug("Exception Info: File {$exception->getFile()} On Line {$exception->getLine()} With {$exception->getMessage()} With Trace {$exception->getTraceAsString()}");
             $ctag->onRemove(ErrorHelper::proc_throw);
             unset($this->customTags[$ref]);
           }

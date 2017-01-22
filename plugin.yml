@@ -18,7 +18,10 @@ commands:
     permission: pchat.command.setprefix
   setsuffix:
     description: "Allows you to set your PureChat suffix"
-    permission: pchat.command.setsuffix	
+    permission: pchat.command.setsuffix
+  listcustomtags:
+    description: "Allows you to list PureChat custom tags"
+    permission: pchat.command.listtags
 permissions:
   pchat:
     description: "PureChat by 64FF00! (Twitter: @64FF00)"
@@ -33,6 +36,8 @@ permissions:
           pchat.command.setprefix:		
             description: "Allows you to set your PureChat prefix"
           pchat.command.setsuffix:		
-            description: "Allows you to set your PureChat suffix"			
+            description: "Allows you to set your PureChat suffix"
+          pchat.command.listtags:
+            description: "Allows you to list PureChat custom tags"
       pchat.coloredMessages:
         description: "Allows you to use colors in chat"		
